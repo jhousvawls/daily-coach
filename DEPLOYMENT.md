@@ -229,6 +229,10 @@ netlify env:set VITE_API_URL "https://api.dailyfocuscoach.com"
 ### Required Environment Variables
 
 ```bash
+# Supabase Configuration (REQUIRED for authentication and cloud sync)
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-public-key
+
 # Application Configuration
 VITE_APP_NAME=Daily Focus Coach
 VITE_APP_VERSION=1.0.0
@@ -242,6 +246,31 @@ VITE_GA_TRACKING_ID=G-XXXXXXXXXX
 # Feature Flags (optional)
 VITE_ENABLE_ANALYTICS=true
 VITE_ENABLE_PWA=true
+```
+
+### Vercel Environment Variables Setup
+
+**For your current deployment, add these to Vercel:**
+
+1. **Go to Vercel Dashboard** → Your Project → Settings → Environment Variables
+2. **Add the following variables:**
+
+```bash
+VITE_SUPABASE_URL=https://xzbkkledybntzvpfcgeb.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6YmtrbGVkeWJudHp2cGZjZ2ViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQwNzQ0NzIsImV4cCI6MjA2OTY1MDQ3Mn0._BSFXJAGtX0yfKFtjVBY28uqK_VyuA6n5_JVbaxYxfQ
+```
+
+3. **Set Environment** to "Production, Preview, and Development"
+4. **Click "Save"**
+
+**Via Vercel CLI:**
+```bash
+# Add Supabase environment variables
+vercel env add VITE_SUPABASE_URL production
+# Paste: https://xzbkkledybntzvpfcgeb.supabase.co
+
+vercel env add VITE_SUPABASE_ANON_KEY production
+# Paste: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6YmtrbGVkeWJudHp2cGZjZ2ViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQwNzQ0NzIsImV4cCI6MjA2OTY1MDQ3Mn0._BSFXJAGtX0yfKFtjVBY28uqK_VyuA6n5_JVbaxYxfQ
 ```
 
 ## Performance Optimization for Production
