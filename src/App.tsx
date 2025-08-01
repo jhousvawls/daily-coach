@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { storage } from './services/storage';
 import { useAI } from './hooks/useAI';
 import { getToday, getYesterday } from './utils/date';
@@ -237,7 +237,6 @@ function App() {
           ) : (
             <Dashboard
               goals={goals}
-              dailyTasks={dailyTasks}
               tinyGoals={tinyGoals}
               recurringTasks={recurringTasks}
               todayFocus={todayFocus}

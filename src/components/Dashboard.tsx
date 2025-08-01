@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Goals, TinyGoal } from '../types/goal';
-import type { DailyTasks, DailyTask, RecurringTask } from '../types/task';
+import type { DailyTask, RecurringTask } from '../types/task';
 
 // Import sub-components
 import FocusCard from './FocusCard';
@@ -11,7 +11,6 @@ import RecurringTasksList from './RecurringTasksList';
 
 interface DashboardProps {
   goals: Goals;
-  dailyTasks: DailyTasks;
   tinyGoals: TinyGoal[];
   recurringTasks: RecurringTask[];
   todayFocus: string;
@@ -33,7 +32,6 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({
   goals,
-  dailyTasks,
   tinyGoals,
   recurringTasks,
   todayFocus,

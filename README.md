@@ -1,5 +1,7 @@
 # Daily Focus Coach
 
+🌐 **Live App**: https://daily-project-coach.vercel.app
+
 An AI-powered daily focus coach that helps you identify and complete your most important tasks while tracking progress toward bigger goals.
 
 ## 🎯 MVP Status: ✅ COMPLETED
@@ -117,6 +119,12 @@ src/
 
 ## Deployment
 
+### 🌐 Live Production App
+- **URL**: https://daily-project-coach.vercel.app
+- **Platform**: Vercel
+- **Status**: ✅ Live and fully functional
+- **Auto-Deploy**: Enabled on GitHub pushes
+
 ### Build for Production
 
 ```bash
@@ -125,9 +133,19 @@ npm run build
 
 ### Deploy to Vercel (Recommended)
 
-1. Connect your GitHub repository to Vercel
-2. Vercel will automatically detect it's a Vite project
-3. Deploy with default settings
+The app is already deployed on Vercel with the following configuration:
+
+1. **Project**: `daily-project-coach`
+2. **Framework**: Vite (auto-detected)
+3. **Build Command**: `vite build`
+4. **Output Directory**: `dist`
+5. **Node Version**: 22.x
+
+**To deploy your own instance:**
+1. Fork this repository
+2. Connect your GitHub repository to Vercel
+3. Vercel will automatically detect it's a Vite project
+4. Deploy with default settings
 
 ### Deploy to Netlify
 

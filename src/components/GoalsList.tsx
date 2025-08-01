@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Target, Plus, CheckCircle2 } from 'lucide-react';
 import type { Goals } from '../types/goal';
-import { PLACEHOLDERS } from '../utils/constants';
 import { formatShortDate } from '../utils/date';
 
 interface GoalsListProps {

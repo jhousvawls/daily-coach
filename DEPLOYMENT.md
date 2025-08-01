@@ -1,5 +1,13 @@
 # Daily Focus Coach - Deployment Guide
 
+## 🌐 Live Production Deployment
+
+**Current Live App**: https://daily-project-coach.vercel.app
+- **Platform**: Vercel
+- **Status**: ✅ Live and fully functional
+- **Last Updated**: January 1, 2025
+- **Auto-Deploy**: Enabled on GitHub pushes to main branch
+
 This guide provides step-by-step instructions for deploying the Daily Focus Coach application to various hosting platforms.
 
 ## Quick Deployment Options
