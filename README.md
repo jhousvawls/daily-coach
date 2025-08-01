@@ -16,6 +16,7 @@ The MVP is fully functional with all core features implemented and tested. Ready
 - **Recurring Tasks**: Manage weekly and monthly recurring tasks with smart scheduling
 - **Progress Visualization**: See your completion history and momentum
 - **Cross-Device Access**: Works seamlessly on iPhone, Mac, and other devices
+- **Light & Dark Themes**: Toggle between light and dark modes with smooth transitions
 - **Local Storage**: Your data stays private and secure on your device
 - **PWA Support**: Install as an app on your phone for native-like experience
 - **Full-Screen Layout**: Clean, distraction-free interface optimized for focus

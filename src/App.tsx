@@ -54,6 +54,16 @@ function App() {
     }
   }, [userData.apiKey, todayTask.text, yesterdayTask, setApiKey]);
 
+  // Apply theme to document root
+  useEffect(() => {
+    const root = document.documentElement;
+    if (userData.preferences.theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [userData.preferences.theme]);
+
   // Persist data changes
   useEffect(() => {
     storage.setGoals(goals);
@@ -156,15 +166,6 @@ function App() {
     );
   };
 
-  const handleSynthesizeFocus = async (brainDump: string) => {
-    if (!brainDump.trim()) return;
-    
-    const result = await synthesizeFocus(brainDump);
-    if (result) {
-      setTodayFocus(result);
-      setShowAiModal(false);
-    }
-  };
 
   const handleAddRecurringTask = (task: Omit<RecurringTask, 'id' | 'createdAt' | 'updatedAt'>) => {
     const newTask: RecurringTask = {
@@ -186,6 +187,16 @@ function App() {
     );
   };
 
+  const handleSynthesizeFocus = async (brainDump: string) => {
+    if (!brainDump.trim()) return;
+    
+    const result = await synthesizeFocus(brainDump);
+    if (result) {
+      setTodayFocus(result);
+      setShowAiModal(false);
+    }
+  };
+
   const handleUpdateUserData = (updates: Partial<UserData>) => {
     setUserData(prev => ({ ...prev, ...updates }));
     if (updates.apiKey) {
@@ -198,7 +209,7 @@ function App() {
   const totalTasks = Object.keys(dailyTasks).length;
 
   return (
-    <div className="bg-gray-100 min-h-screen text-gray-800">
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-200">
       <div className="container mx-auto max-w-4xl p-4 sm:p-6">
         <Header setView={setView} />
         
@@ -231,14 +242,16 @@ function App() {
           {view === 'settings' ? (
             <Settings
               userData={userData}
+              recurringTasks={recurringTasks}
               onUpdateUserData={handleUpdateUserData}
+              onAddRecurringTask={handleAddRecurringTask}
+              onCompleteRecurringTask={handleCompleteRecurringTask}
               onBack={() => setView('dashboard')}
             />
           ) : (
             <Dashboard
               goals={goals}
               tinyGoals={tinyGoals}
-              recurringTasks={recurringTasks}
               todayFocus={todayFocus}
               setTodayFocus={setTodayFocus}
               isFocusSet={isFocusSet}
@@ -251,8 +264,6 @@ function App() {
               onCompleteBigGoal={handleCompleteBigGoal}
               onAddTinyGoal={handleAddTinyGoal}
               onToggleTinyGoal={handleToggleTinyGoal}
-              onAddRecurringTask={handleAddRecurringTask}
-              onCompleteRecurringTask={handleCompleteRecurringTask}
               onShowAiModal={() => setShowAiModal(true)}
             />
           )}
