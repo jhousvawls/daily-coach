@@ -266,7 +266,7 @@ export class CloudStorageService {
     }
   }
 
-  async importData(data: any): Promise<void> {
+  async importData(_data: any): Promise<void> {
     // This would be used for data migration from localStorage
     // Implementation would depend on the specific migration strategy
     throw new Error('Data import not yet implemented')
