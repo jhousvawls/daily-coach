@@ -10,99 +10,17 @@ const STORAGE_KEYS = {
   USER_DATA: 'daily-focus-coach-user-data',
 } as const;
 
-// Default data
+// Default data - empty for fresh start
 const defaultGoals: Goals = {
-  personal: [
-    { 
-      id: 2, 
-      text: 'Read 12 books this year', 
-      progress: 50, 
-      subtasks: [], 
-      completedAt: undefined,
-      category: 'personal',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    { 
-      id: 3, 
-      text: 'Run a 10k marathon', 
-      progress: 10, 
-      subtasks: [], 
-      completedAt: undefined,
-      category: 'personal',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-  ],
-  professional: [
-    { 
-      id: 1, 
-      text: 'Launch a new personal project', 
-      progress: 30, 
-      subtasks: [], 
-      completedAt: undefined,
-      category: 'professional',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    { 
-      id: 4, 
-      text: 'Finish Q3 marketing report', 
-      progress: 100, 
-      subtasks: [], 
-      completedAt: '2025-07-31T10:00:00Z',
-      category: 'professional',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-  ]
+  personal: [],
+  professional: []
 };
 
-const defaultTinyGoals: TinyGoal[] = [
-  { id: 1, text: 'Water the plants', completedAt: undefined },
-  { id: 2, text: 'Take out the trash', completedAt: '2025-07-30T09:00:00Z' },
-  { id: 3, text: 'Reply to mom\'s email', completedAt: undefined },
-];
+const defaultTinyGoals: TinyGoal[] = [];
 
-const defaultDailyTasks: DailyTasks = {
-  '2025-07-31': { text: 'Finalize Q3 marketing report', completed: true },
-  '2025-08-01': { text: '', completed: false },
-};
+const defaultDailyTasks: DailyTasks = {};
 
-const defaultRecurringTasks: RecurringTask[] = [
-  {
-    id: '1',
-    text: 'Take out recycling',
-    recurrenceType: 'weekly',
-    weeklyDays: [1], // Monday
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    text: 'Review monthly budget',
-    recurrenceType: 'monthly',
-    monthlyOption: 'lastDay',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    text: 'Team standup',
-    recurrenceType: 'weekly',
-    weeklyDays: [1, 3, 5], // Monday, Wednesday, Friday
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    text: 'Pay bills',
-    recurrenceType: 'monthly',
-    monthlyOption: 'midMonth',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+const defaultRecurringTasks: RecurringTask[] = [];
 
 const defaultUserData: UserData = {
   apiKey: '',
@@ -112,10 +30,10 @@ const defaultUserData: UserData = {
     notifications: true,
   },
   stats: {
-    totalTasks: 2,
-    completedTasks: 1,
-    currentStreak: 1,
-    longestStreak: 3,
+    totalTasks: 0,
+    completedTasks: 0,
+    currentStreak: 0,
+    longestStreak: 0,
   },
 };
 
