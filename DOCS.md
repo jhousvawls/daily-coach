@@ -17,6 +17,7 @@ The Daily Focus Coach documentation is organized into several key areas to help 
 | [BUILD.md](./BUILD.md) | Build process, development setup, and troubleshooting | Developers |
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | Deployment guides for various platforms | DevOps/Developers |
 | [API.md](./API.md) | API integrations, data models, and service documentation | Developers |
+| [CLOUD-SYNC.md](./CLOUD-SYNC.md) | Cloud synchronization implementation plan with Supabase | Developers |
 
 ### Quick Navigation
 
@@ -99,6 +100,18 @@ The Daily Focus Coach documentation is organized into several key areas to help 
 - Rate limiting implementation
 - Security considerations
 - Testing approaches
+
+### CLOUD-SYNC.md
+**Purpose:** Cloud synchronization implementation plan  
+**Contains:**
+- Supabase integration architecture
+- Database schema design for cloud storage
+- Authentication and user management
+- Real-time sync implementation
+- Offline-first architecture design
+- Data migration strategies
+- Security and privacy considerations
+- Implementation timeline and phases
 
 ## 🎯 Use Case Scenarios
 
