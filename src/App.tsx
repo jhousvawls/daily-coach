@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { storage } from './services/storage';
 import { useAI } from './hooks/useAI';
 import { getToday, getYesterday } from './utils/date';
+import { aiService } from './services/ai';
 import type { Goals, TinyGoal } from './types/goal';
 import type { DailyTasks, RecurringTask } from './types/task';
 import type { UserData } from './types/user';
+import type { DailyQuote } from './services/storage';
 
 // Components
 import Header from './components/Header';
@@ -27,6 +29,10 @@ function App() {
   const [showAiModal, setShowAiModal] = useState(false);
   const [todayFocus, setTodayFocus] = useState('');
   const [isFocusSet, setIsFocusSet] = useState(false);
+
+  // Quote state
+  const [dailyQuote, setDailyQuote] = useState<DailyQuote | null>(null);
+  const [isQuoteLoading, setIsQuoteLoading] = useState(false);
 
   // AI hook
   const { isGenerating, error: aiError, synthesizeFocus, setApiKey } = useAI();
@@ -84,6 +90,57 @@ function App() {
   useEffect(() => {
     storage.setUserData(userData);
   }, [userData]);
+
+  // Initialize daily quote
+  useEffect(() => {
+    const loadDailyQuote = async () => {
+      if (!userData.preferences.showDailyQuote) {
+        setDailyQuote(null);
+        return;
+      }
+
+      // Check if we already have a quote for today
+      const existingQuote = storage.getDailyQuote(today);
+      if (existingQuote) {
+        setDailyQuote(existingQuote);
+        return;
+      }
+
+      // Generate new quote for today
+      if (userData.apiKey) {
+        setIsQuoteLoading(true);
+        aiService.setApiKey(userData.apiKey);
+        
+        try {
+          const { quote, author } = await aiService.generateDailyQuote('motivational');
+          const newQuote: DailyQuote = {
+            quote,
+            author,
+            date: today,
+            mood: 'motivational'
+          };
+          
+          storage.setDailyQuote(today, newQuote);
+          setDailyQuote(newQuote);
+        } catch (error) {
+          console.error('Failed to generate daily quote:', error);
+          // Set a fallback quote
+          const fallbackQuote: DailyQuote = {
+            quote: "The way to get started is to quit talking and begin doing.",
+            author: "Walt Disney",
+            date: today,
+            mood: 'motivational'
+          };
+          storage.setDailyQuote(today, fallbackQuote);
+          setDailyQuote(fallbackQuote);
+        } finally {
+          setIsQuoteLoading(false);
+        }
+      }
+    };
+
+    loadDailyQuote();
+  }, [today, userData.apiKey, userData.preferences.showDailyQuote]);
 
   // Handlers
   const handleSetFocus = () => {
@@ -204,6 +261,30 @@ function App() {
     }
   };
 
+  const handleRefreshQuote = async (mood: string) => {
+    if (!userData.apiKey) return;
+
+    setIsQuoteLoading(true);
+    aiService.setApiKey(userData.apiKey);
+    
+    try {
+      const { quote, author } = await aiService.generateDailyQuote(mood);
+      const newQuote: DailyQuote = {
+        quote,
+        author,
+        date: today,
+        mood
+      };
+      
+      storage.setDailyQuote(today, newQuote);
+      setDailyQuote(newQuote);
+    } catch (error) {
+      console.error('Failed to refresh daily quote:', error);
+    } finally {
+      setIsQuoteLoading(false);
+    }
+  };
+
   // Calculate stats
   const completedTasksCount = Object.values(dailyTasks).filter(t => t.completed).length;
   const totalTasks = Object.keys(dailyTasks).length;
@@ -258,6 +339,9 @@ function App() {
               todayTask={todayTask}
               completedTasksCount={completedTasksCount}
               totalTasks={totalTasks}
+              dailyQuote={dailyQuote}
+              isQuoteLoading={isQuoteLoading}
+              showDailyQuote={userData.preferences.showDailyQuote}
               onSetFocus={handleSetFocus}
               onCompleteTodayTask={handleCompleteTodayTask}
               onAddGoal={handleAddGoal}
@@ -265,6 +349,7 @@ function App() {
               onAddTinyGoal={handleAddTinyGoal}
               onToggleTinyGoal={handleToggleTinyGoal}
               onShowAiModal={() => setShowAiModal(true)}
+              onRefreshQuote={handleRefreshQuote}
             />
           )}
         </main>

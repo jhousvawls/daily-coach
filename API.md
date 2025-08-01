@@ -171,6 +171,51 @@ interface PriorityRecommendationResponse {
 }
 ```
 
+#### 5. Daily Quote Generation
+
+**Purpose**: Generate inspirational quotes with mood-specific targeting.
+
+**Input**:
+```typescript
+interface DailyQuoteRequest {
+  mood: 'motivational' | 'business' | 'funny' | 'dad-joke';
+}
+```
+
+**API Call**:
+```typescript
+const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${apiKey}`,
+  },
+  body: JSON.stringify({
+    model: 'gpt-4',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a Daily Focus Coach delivering inspirational quotes to busy professionals.'
+      },
+      {
+        role: 'user',
+        content: `Generate a ${mood} quote from business thinkers like Jim Rohn, Naval Ravikant, Derek Sivers, Paul Graham, Adam Grant, etc. Format: "Quote" — Author`
+      }
+    ],
+    max_tokens: 100,
+    temperature: 0.8,
+  }),
+});
+```
+
+**Output**:
+```typescript
+interface DailyQuoteResponse {
+  quote: string;
+  author: string;
+}
+```
+
 ## Data Models
 
 ### Core Data Structures

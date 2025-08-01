@@ -23,6 +23,7 @@ const Settings: React.FC<SettingsProps> = ({
   const [tempReminderTime, setTempReminderTime] = useState(userData.preferences.reminderTime);
   const [tempNotifications, setTempNotifications] = useState(userData.preferences.notifications);
   const [tempTheme, setTempTheme] = useState(userData.preferences.theme);
+  const [tempShowDailyQuote, setTempShowDailyQuote] = useState(userData.preferences.showDailyQuote);
   const [showThemeDropdown, setShowThemeDropdown] = useState(false);
   
   const themeDropdownRef = useRef<HTMLDivElement>(null);
@@ -48,6 +49,7 @@ const Settings: React.FC<SettingsProps> = ({
         reminderTime: tempReminderTime,
         notifications: tempNotifications,
         theme: tempTheme,
+        showDailyQuote: tempShowDailyQuote,
       },
     });
     onBack();
@@ -58,6 +60,7 @@ const Settings: React.FC<SettingsProps> = ({
     setTempReminderTime(userData.preferences.reminderTime);
     setTempNotifications(userData.preferences.notifications);
     setTempTheme(userData.preferences.theme);
+    setTempShowDailyQuote(userData.preferences.showDailyQuote);
     setShowThemeDropdown(false);
     onBack();
   };
@@ -142,6 +145,24 @@ const Settings: React.FC<SettingsProps> = ({
             </label>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-7">
               Receive reminders and motivational messages.
+            </p>
+          </div>
+
+          {/* Daily Quote Section */}
+          <div>
+            <label className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                checked={tempShowDailyQuote}
+                onChange={(e) => setTempShowDailyQuote(e.target.checked)}
+                className="w-4 h-4 text-orange-400 border-gray-300 dark:border-gray-600 rounded focus:ring-orange-400 focus:ring-2 bg-white dark:bg-gray-700"
+              />
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Show daily inspirational quote
+              </span>
+            </label>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-7">
+              Display an AI-generated motivational quote above your daily focus.
             </p>
           </div>
 

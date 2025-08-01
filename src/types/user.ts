@@ -2,6 +2,7 @@ export interface UserPreferences {
   reminderTime: string;
   theme: 'light' | 'dark';
   notifications: boolean;
+  showDailyQuote: boolean;
 }
 
 export interface UserStats {

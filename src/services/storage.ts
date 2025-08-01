@@ -2,12 +2,24 @@ import type { Goals, TinyGoal } from '../types/goal';
 import type { DailyTasks, RecurringTask } from '../types/task';
 import type { UserData } from '../types/user';
 
+export interface DailyQuote {
+  quote: string;
+  author: string;
+  date: string;
+  mood?: string;
+}
+
+export interface DailyQuotes {
+  [date: string]: DailyQuote; // date in YYYY-MM-DD format
+}
+
 const STORAGE_KEYS = {
   GOALS: 'daily-focus-coach-goals',
   TINY_GOALS: 'daily-focus-coach-tiny-goals',
   DAILY_TASKS: 'daily-focus-coach-daily-tasks',
   RECURRING_TASKS: 'daily-focus-coach-recurring-tasks',
   USER_DATA: 'daily-focus-coach-user-data',
+  DAILY_QUOTES: 'daily-focus-coach-daily-quotes',
 } as const;
 
 // Default data - empty for fresh start
@@ -22,12 +34,15 @@ const defaultDailyTasks: DailyTasks = {};
 
 const defaultRecurringTasks: RecurringTask[] = [];
 
+const defaultDailyQuotes: DailyQuotes = {};
+
 const defaultUserData: UserData = {
   apiKey: '',
   preferences: {
     reminderTime: '09:00',
     theme: 'light',
     notifications: true,
+    showDailyQuote: true,
   },
   stats: {
     totalTasks: 0,
@@ -109,6 +124,31 @@ export const storage = {
     localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(userData));
   },
 
+  // Daily Quotes
+  getDailyQuotes(): DailyQuotes {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.DAILY_QUOTES);
+      return stored ? JSON.parse(stored) : defaultDailyQuotes;
+    } catch {
+      return defaultDailyQuotes;
+    }
+  },
+
+  setDailyQuotes(dailyQuotes: DailyQuotes): void {
+    localStorage.setItem(STORAGE_KEYS.DAILY_QUOTES, JSON.stringify(dailyQuotes));
+  },
+
+  getDailyQuote(date: string): DailyQuote | null {
+    const quotes = this.getDailyQuotes();
+    return quotes[date] || null;
+  },
+
+  setDailyQuote(date: string, quote: DailyQuote): void {
+    const quotes = this.getDailyQuotes();
+    quotes[date] = quote;
+    this.setDailyQuotes(quotes);
+  },
+
   // Clear all data
   clearAll(): void {
     Object.values(STORAGE_KEYS).forEach(key => {
@@ -124,6 +164,7 @@ export const storage = {
       dailyTasks: this.getDailyTasks(),
       recurringTasks: this.getRecurringTasks(),
       userData: this.getUserData(),
+      dailyQuotes: this.getDailyQuotes(),
       exportedAt: new Date().toISOString(),
     };
   },
@@ -135,5 +176,6 @@ export const storage = {
     if (data.dailyTasks) this.setDailyTasks(data.dailyTasks);
     if (data.recurringTasks) this.setRecurringTasks(data.recurringTasks);
     if (data.userData) this.setUserData(data.userData);
+    if (data.dailyQuotes) this.setDailyQuotes(data.dailyQuotes);
   },
 };

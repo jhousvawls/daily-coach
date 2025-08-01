@@ -254,6 +254,101 @@ Recommend ONE specific task that would have the biggest impact today. Be concise
 
     return "Focus on your most important goal today";
   }
+
+  async generateDailyQuote(mood: string = 'motivational'): Promise<{ quote: string; author: string }> {
+    const moodPrompts = {
+      motivational: {
+        system: 'You are a Daily Focus Coach delivering one inspirational quote each morning to a busy professional. Focus on drive, focus, and self-improvement quotes from business thinkers and startup leaders.',
+        authors: 'Jim Rohn, Naval Ravikant, Derek Sivers, Paul Graham, Adam Grant, or similar business/productivity thought leaders',
+        style: 'motivational and drive-focused'
+      },
+      business: {
+        system: 'You are a Daily Focus Coach delivering one business-focused quote each morning to a busy professional. Focus on productivity, leadership, and strategy quotes.',
+        authors: 'Jim Rohn, Naval Ravikant, Derek Sivers, Paul Graham, Adam Grant, Peter Drucker, or similar business leaders',
+        style: 'business-focused on productivity, leadership, or strategy'
+      },
+      funny: {
+        system: 'You are a Daily Focus Coach delivering one funny yet wise quote each morning to a busy professional. Focus on witty, sarcastic, but meaningful quotes.',
+        authors: 'Tina Fey, Scott Adams, Derek Sivers, or other clever minds known for witty but insightful observations',
+        style: 'funny, witty, or sarcastic but still meaningful and insightful'
+      },
+      'dad-joke': {
+        system: 'You are a Daily Focus Coach delivering one dad joke each morning to a busy professional. Focus on light, punny, but surprisingly wise dad jokes.',
+        authors: 'clever comedians, witty business leaders, or create an appropriate attribution',
+        style: 'dad joke that is punny, light, but has a surprisingly wise or motivational undertone'
+      }
+    };
+
+    const moodConfig = moodPrompts[mood as keyof typeof moodPrompts] || moodPrompts.motivational;
+
+    const prompt = `Imagine you are a Daily Focus Coach delivering one inspirational quote each morning to a busy professional. The quote should be short, insightful, and ${moodConfig.style}.
+
+Avoid anything overly cliché or spiritual. Focus on quotes from ${moodConfig.authors}.
+
+Format:
+"Quote goes here"
+— Author Name
+
+Only return the quote and author, nothing else. Keep the quote to 1-2 sentences maximum.`;
+
+    const response = await this.makeRequest('/chat/completions', {
+      model: 'gpt-4',
+      messages: [
+        {
+          role: 'system',
+          content: moodConfig.system
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      max_tokens: 100,
+      temperature: 0.8,
+    });
+
+    if (response.success && response.data?.choices?.[0]?.message?.content) {
+      const content = response.data.choices[0].message.content.trim();
+      
+      // Parse the quote and author
+      const match = content.match(/^"(.+)"\s*—\s*(.+)$/);
+      if (match) {
+        return {
+          quote: match[1].trim(),
+          author: match[2].trim()
+        };
+      }
+    }
+
+    // Fallback quotes for each mood
+    const fallbackQuotes = {
+      motivational: [
+        { quote: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+        { quote: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+        { quote: "Don't be afraid to give up the good to go for the great.", author: "John D. Rockefeller" }
+      ],
+      business: [
+        { quote: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
+        { quote: "Your most unhappy customers are your greatest source of learning.", author: "Bill Gates" },
+        { quote: "Ideas are easy. Implementation is hard.", author: "Guy Kawasaki" }
+      ],
+      funny: [
+        { quote: "I'm not a smart man, but I know what love is. And I know what business is too.", author: "Forrest Gump (Business Edition)" },
+        { quote: "The trouble with having an open mind is that people keep coming along and sticking things into it.", author: "Terry Pratchett" },
+        { quote: "I have not failed. I've just found 10,000 ways that won't work.", author: "Thomas Edison" }
+      ],
+      'dad-joke': [
+        { quote: "Why don't scientists trust atoms? Because they make up everything! Just like good business plans.", author: "Dad Wisdom" },
+        { quote: "I told my wife she was drawing her eyebrows too high. She looked surprised. Success works the same way.", author: "Dad Logic" },
+        { quote: "Why did the scarecrow win an award? He was outstanding in his field! Be outstanding in yours.", author: "Motivational Dad" }
+      ]
+    };
+
+    const moodFallbacks = fallbackQuotes[mood as keyof typeof fallbackQuotes] || fallbackQuotes.motivational;
+    const randomFallback = moodFallbacks[Math.floor(Math.random() * moodFallbacks.length)];
+    
+    return randomFallback;
+  }
 }
 
 export const aiService = new AIService();

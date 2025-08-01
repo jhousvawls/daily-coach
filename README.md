@@ -10,6 +10,7 @@ The MVP is fully functional with all core features implemented and tested. Ready
 
 ## ✨ Features
 
+- **Daily Inspirational Quotes**: AI-generated motivational quotes above your daily focus with mood selection (motivational, business-focused, funny & witty, or dad jokes)
 - **Daily Focus Question**: "What is the most important thing you can work on today?"
 - **AI-Powered Insights**: Uses OpenAI GPT-4 to analyze patterns and provide intelligent recommendations
 - **Goal Management**: Track both big goals and tiny daily tasks

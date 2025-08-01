@@ -1,8 +1,10 @@
 import React from 'react';
 import type { Goals, TinyGoal } from '../types/goal';
 import type { DailyTask } from '../types/task';
+import type { DailyQuote } from '../services/storage';
 
 // Import sub-components
+import MotivationalQuote from './MotivationalQuote';
 import FocusCard from './FocusCard';
 import ProgressTracker from './ProgressTracker';
 import GoalsList from './GoalsList';
@@ -17,6 +19,9 @@ interface DashboardProps {
   todayTask: DailyTask;
   completedTasksCount: number;
   totalTasks: number;
+  dailyQuote: DailyQuote | null;
+  isQuoteLoading: boolean;
+  showDailyQuote: boolean;
   onSetFocus: () => void;
   onCompleteTodayTask: () => void;
   onAddGoal: (text: string, category: 'personal' | 'professional') => void;
@@ -24,6 +29,7 @@ interface DashboardProps {
   onAddTinyGoal: (text: string) => void;
   onToggleTinyGoal: (goalId: number) => void;
   onShowAiModal: () => void;
+  onRefreshQuote: (mood: string) => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
@@ -35,6 +41,9 @@ const Dashboard: React.FC<DashboardProps> = ({
   todayTask,
   completedTasksCount,
   totalTasks,
+  dailyQuote,
+  isQuoteLoading,
+  showDailyQuote,
   onSetFocus,
   onCompleteTodayTask,
   onAddGoal,
@@ -42,9 +51,18 @@ const Dashboard: React.FC<DashboardProps> = ({
   onAddTinyGoal,
   onToggleTinyGoal,
   onShowAiModal,
+  onRefreshQuote,
 }) => {
   return (
     <div className="space-y-6">
+      {/* Daily Inspirational Quote - Full Width */}
+      <MotivationalQuote
+        dailyQuote={dailyQuote}
+        isLoading={isQuoteLoading}
+        onRefreshQuote={onRefreshQuote}
+        enabled={showDailyQuote}
+      />
+
       {/* Today's Focus - Full Width */}
       <FocusCard
         todayFocus={todayFocus}
