@@ -168,10 +168,32 @@ The app is already deployed on Vercel with the following configuration:
 4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
-## Roadmap
+## Database & Cloud Sync Implementation
 
-### Phase 2 Features
-- [ ] Cloud sync with user accounts
+### 🚀 Next Phase: Cross-Device Synchronization
+We're implementing Supabase-powered cloud sync to enable seamless access across iPhone, desktop, and all devices while maintaining the current offline-first experience.
+
+**Implementation Documents:**
+- 📋 **[DATABASE-CHECKLIST.md](DATABASE-CHECKLIST.md)** - Day-by-day implementation checklist
+- 📖 **[DATABASE-IMPLEMENTATION-PLAN.md](DATABASE-IMPLEMENTATION-PLAN.md)** - Complete technical specification
+- 🗄️ **[database-setup.sql](database-setup.sql)** - Ready-to-run SQL setup script
+
+### Implementation Timeline (10 Days)
+- **Phase 1 (Days 1-3)**: Supabase setup, authentication, core services
+- **Phase 2 (Days 4-7)**: Hybrid storage, data migration, sync implementation
+- **Phase 3 (Days 8-10)**: Real-time features, testing, production deployment
+
+### Key Features Coming
+- ✅ **Cross-Device Sync**: Access your data on iPhone, Mac, and any device
+- ✅ **Offline-First**: Maintains current instant responsiveness
+- ✅ **Real-time Updates**: Live synchronization across devices
+- ✅ **Data Safety**: Cloud backup with local fallback
+- ✅ **User Choice**: Optional cloud sync, local-only still available
+- ✅ **Zero Disruption**: Existing users continue seamlessly
+
+## Future Roadmap
+
+### Phase 2 Features (Post-Database)
 - [ ] Team/family sharing capabilities
 - [ ] Advanced analytics and reporting
 - [ ] Calendar integration

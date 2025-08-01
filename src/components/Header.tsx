@@ -1,6 +1,8 @@
-import React from 'react';
-import { Settings } from 'lucide-react';
+import React, { useState } from 'react';
+import { Settings, User, LogOut, Cloud } from 'lucide-react';
 import { APP_NAME } from '../utils/constants';
+import { useAuth } from '../hooks/useAuth';
+import { AuthModal } from './AuthModal';
 
 // Coach Icon Component
 const CoachIcon: React.FC<{ className?: string }> = ({ className }) => (
@@ -25,24 +27,122 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ setView }) => {
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const { user, signOut, isAuthenticated } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    setShowUserMenu(false);
+  };
+
+  const getUserDisplayName = () => {
+    if (user?.user_metadata?.full_name) {
+      return user.user_metadata.full_name;
+    }
+    if (user?.email) {
+      return user.email.split('@')[0];
+    }
+    return 'User';
+  };
+
   return (
-    <header className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
-      <div className="flex items-center gap-3">
-        <div className="bg-orange-400 p-2 rounded-lg">
-          <CoachIcon className="text-white w-6 h-6" />
+    <>
+      <header className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+        <div className="flex items-center gap-3">
+          <div className="bg-orange-400 p-2 rounded-lg">
+            <CoachIcon className="text-white w-6 h-6" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 capitalize">
+            {APP_NAME.toLowerCase()}
+          </h1>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 capitalize">
-          {APP_NAME.toLowerCase()}
-        </h1>
-      </div>
-      <button
-        onClick={() => setView('settings')}
-        className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-        aria-label="Settings"
-      >
-        <Settings className="text-gray-500" size={24} />
-      </button>
-    </header>
+
+        <div className="flex items-center gap-2">
+          {/* Cloud Sync Status */}
+          {isAuthenticated && (
+            <div className="flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs">
+              <Cloud className="w-3 h-3" />
+              <span>Synced</span>
+            </div>
+          )}
+
+          {/* User Menu or Sign In Button */}
+          {isAuthenticated ? (
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="User menu"
+              >
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <User className="text-white w-4 h-4" />
+                </div>
+                <span className="hidden sm:block text-sm font-medium text-gray-700">
+                  {getUserDisplayName()}
+                </span>
+              </button>
+
+              {/* User Dropdown Menu */}
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                  <div className="py-1">
+                    <div className="px-4 py-2 text-sm text-gray-500 border-b">
+                      {user?.email}
+                    </div>
+                    <button
+                      onClick={() => setView('settings')}
+                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <Settings className="w-4 h-4" />
+                      Settings
+                    </button>
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => setView('settings')}
+                className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                aria-label="Settings"
+              >
+                <Settings className="text-gray-500" size={20} />
+              </button>
+            </>
+          )}
+        </div>
+      </header>
+
+      {/* Click outside to close user menu */}
+      {showUserMenu && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setShowUserMenu(false)}
+        />
+      )}
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        initialMode="signin"
+      />
+    </>
   );
 };
 

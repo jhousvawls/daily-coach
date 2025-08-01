@@ -1,0 +1,208 @@
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables. Please check your .env.local file.')
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// Database types for better TypeScript support
+export type Database = {
+  public: {
+    Tables: {
+      goals: {
+        Row: {
+          id: string
+          user_id: string
+          text: string
+          description: string | null
+          category: 'personal' | 'professional' | null
+          progress: number
+          target_date: string | null
+          completed_at: string | null
+          created_at: string
+          updated_at: string
+          last_modified_device: string | null
+          version: number
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          text: string
+          description?: string | null
+          category?: 'personal' | 'professional' | null
+          progress?: number
+          target_date?: string | null
+          completed_at?: string | null
+          created_at?: string
+          updated_at?: string
+          last_modified_device?: string | null
+          version?: number
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          text?: string
+          description?: string | null
+          category?: 'personal' | 'professional' | null
+          progress?: number
+          target_date?: string | null
+          completed_at?: string | null
+          created_at?: string
+          updated_at?: string
+          last_modified_device?: string | null
+          version?: number
+        }
+      }
+      tiny_goals: {
+        Row: {
+          id: string
+          user_id: string
+          text: string
+          completed_at: string | null
+          created_at: string
+          updated_at: string
+          last_modified_device: string | null
+          version: number
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          text: string
+          completed_at?: string | null
+          created_at?: string
+          updated_at?: string
+          last_modified_device?: string | null
+          version?: number
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          text?: string
+          completed_at?: string | null
+          created_at?: string
+          updated_at?: string
+          last_modified_device?: string | null
+          version?: number
+        }
+      }
+      daily_tasks: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          text: string
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          updated_at: string
+          last_modified_device: string | null
+          version: number
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date: string
+          text: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          updated_at?: string
+          last_modified_device?: string | null
+          version?: number
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date?: string
+          text?: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          updated_at?: string
+          last_modified_device?: string | null
+          version?: number
+        }
+      }
+      recurring_tasks: {
+        Row: {
+          id: string
+          user_id: string
+          text: string
+          recurrence_type: 'weekly' | 'monthly'
+          weekly_days: number[] | null
+          monthly_option: 'firstDay' | 'midMonth' | 'lastDay' | null
+          last_completed: string | null
+          created_at: string
+          updated_at: string
+          last_modified_device: string | null
+          version: number
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          text: string
+          recurrence_type: 'weekly' | 'monthly'
+          weekly_days?: number[] | null
+          monthly_option?: 'firstDay' | 'midMonth' | 'lastDay' | null
+          last_completed?: string | null
+          created_at?: string
+          updated_at?: string
+          last_modified_device?: string | null
+          version?: number
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          text?: string
+          recurrence_type?: 'weekly' | 'monthly'
+          weekly_days?: number[] | null
+          monthly_option?: 'firstDay' | 'midMonth' | 'lastDay' | null
+          last_completed?: string | null
+          created_at?: string
+          updated_at?: string
+          last_modified_device?: string | null
+          version?: number
+        }
+      }
+      user_preferences: {
+        Row: {
+          user_id: string
+          api_key_encrypted: string | null
+          reminder_time: string
+          theme: 'light' | 'dark'
+          notifications: boolean
+          sync_enabled: boolean
+          last_sync: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          api_key_encrypted?: string | null
+          reminder_time?: string
+          theme?: 'light' | 'dark'
+          notifications?: boolean
+          sync_enabled?: boolean
+          last_sync?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          user_id?: string
+          api_key_encrypted?: string | null
+          reminder_time?: string
+          theme?: 'light' | 'dark'
+          notifications?: boolean
+          sync_enabled?: boolean
+          last_sync?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+    }
+  }
+}
