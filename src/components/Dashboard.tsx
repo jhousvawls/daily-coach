@@ -53,45 +53,44 @@ const Dashboard: React.FC<DashboardProps> = ({
   onShowAiModal,
 }) => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Main Content - Focus Card */}
-      <div className="lg:col-span-2 space-y-6">
-        <FocusCard
-          todayFocus={todayFocus}
-          setTodayFocus={setTodayFocus}
-          isFocusSet={isFocusSet}
-          todayTask={todayTask}
-          onSetFocus={onSetFocus}
-          onCompleteTodayTask={onCompleteTodayTask}
-          onShowAiModal={onShowAiModal}
-        />
-      </div>
+    <div className="space-y-6">
+      {/* Today's Focus - Full Width */}
+      <FocusCard
+        todayFocus={todayFocus}
+        setTodayFocus={setTodayFocus}
+        isFocusSet={isFocusSet}
+        todayTask={todayTask}
+        onSetFocus={onSetFocus}
+        onCompleteTodayTask={onCompleteTodayTask}
+        onShowAiModal={onShowAiModal}
+      />
 
-      {/* Sidebar */}
-      <div className="space-y-6">
-        <ProgressTracker
-          completed={completedTasksCount}
-          total={totalTasks}
-        />
-        
-        <GoalsList
-          goals={goals}
-          onAddGoal={onAddGoal}
-          onCompleteBigGoal={onCompleteBigGoal}
-        />
-        
-        <TinyGoalsList
-          goals={tinyGoals}
-          onAddGoal={onAddTinyGoal}
-          onToggleGoal={onToggleTinyGoal}
-        />
-        
-        <RecurringTasksList
-          tasks={recurringTasks}
-          onAddTask={onAddRecurringTask}
-          onCompleteTask={onCompleteRecurringTask}
-        />
-      </div>
+      {/* Progress Tracker - Full Width */}
+      <ProgressTracker
+        completed={completedTasksCount}
+        total={totalTasks}
+      />
+      
+      {/* Big Goals - Full Width */}
+      <GoalsList
+        goals={goals}
+        onAddGoal={onAddGoal}
+        onCompleteBigGoal={onCompleteBigGoal}
+      />
+      
+      {/* Tiny Goals - Full Width */}
+      <TinyGoalsList
+        goals={tinyGoals}
+        onAddGoal={onAddTinyGoal}
+        onToggleGoal={onToggleTinyGoal}
+      />
+      
+      {/* Recurring Tasks - Full Width */}
+      <RecurringTasksList
+        tasks={recurringTasks}
+        onAddTask={onAddRecurringTask}
+        onCompleteTask={onCompleteRecurringTask}
+      />
     </div>
   );
 };
