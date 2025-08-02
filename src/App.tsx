@@ -292,7 +292,7 @@ function App() {
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-200">
       <div className="container mx-auto max-w-4xl p-4 sm:p-6">
-        <Header setView={setView} />
+        <Header view={view} setView={setView} />
         
         {/* Yesterday Check-in Modal */}
         {showYesterdayCheckin && yesterdayTask && (

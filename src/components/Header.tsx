@@ -23,10 +23,11 @@ const CoachIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 interface HeaderProps {
+  view: 'dashboard' | 'settings';
   setView: (view: 'dashboard' | 'settings') => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ setView }) => {
+const Header: React.FC<HeaderProps> = ({ view, setView }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { user, signOut, isAuthenticated } = useAuth();
@@ -117,9 +118,9 @@ const Header: React.FC<HeaderProps> = ({ setView }) => {
                 Sign In
               </button>
               <button
-                onClick={() => setView('settings')}
+                onClick={() => setView(view === 'settings' ? 'dashboard' : 'settings')}
                 className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                aria-label="Settings"
+                aria-label={view === 'settings' ? 'Back to dashboard' : 'Settings'}
               >
                 <Settings className="text-gray-500 dark:text-gray-400" size={20} />
               </button>

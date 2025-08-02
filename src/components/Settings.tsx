@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { X } from 'lucide-react';
 import type { UserData } from '../types/user';
 import type { RecurringTask } from '../types/task';
 import RecurringTasksList from './RecurringTasksList';
@@ -69,7 +70,16 @@ const Settings: React.FC<SettingsProps> = ({
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Settings Panel */}
       <div className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg transition-colors duration-200">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Settings</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Settings</h2>
+          <button
+            onClick={onBack}
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            aria-label="Close settings"
+          >
+            <X className="w-6 h-6 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300" />
+          </button>
+        </div>
         
         <div className="space-y-6">
           {/* Theme Section */}
