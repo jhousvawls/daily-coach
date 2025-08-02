@@ -3,11 +3,25 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables. Please check your .env.local file.')
+// Create a lazy-initialized Supabase client
+let supabaseClient: ReturnType<typeof createClient> | null = null
+
+export const getSupabase = () => {
+  if (!supabaseClient) {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Missing Supabase environment variables. Please check your .env.local file.')
+    }
+    supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
+  }
+  return supabaseClient
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// For backward compatibility, export a getter that only initializes when accessed
+export const supabase = new Proxy({} as ReturnType<typeof createClient>, {
+  get(target, prop) {
+    return getSupabase()[prop as keyof ReturnType<typeof createClient>]
+  }
+})
 
 // Database types for better TypeScript support
 export type Database = {
