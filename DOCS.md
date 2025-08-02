@@ -254,5 +254,23 @@ If you find errors or missing information in the documentation:
 
 This documentation index provides a comprehensive overview of all available documentation for the Daily Focus Coach project. Keep this file updated as new documentation is added or existing documentation is modified.
 
+## 🆕 Recent Updates
+
+### January 2025 - Version 1.2.0
+**Major UI/UX Improvements:**
+- ✅ **Tabbed Settings Interface**: Complete redesign with 4-tab navigation (General, Recurring, Stats, Advanced)
+- ✅ **Enhanced Stats Display**: Beautiful 2x2 grid layout for user metrics
+- ✅ **Smart API Key Management**: Intelligent status detection and optional override functionality
+- ✅ **Data Export/Reset**: Complete backup and secure data deletion capabilities
+- ✅ **Focus Refresh Feature**: Ability to change daily focus with completion preservation
+- ✅ **Mobile Optimization**: Horizontal scroll tabs and improved responsive design
+
+**Technical Enhancements:**
+- Professional tabbed navigation with orange active states
+- Comprehensive dark mode support across all components
+- Enhanced error handling and user feedback
+- Improved mobile touch targets and accessibility
+- Better visual hierarchy and spacing throughout
+
 **Last Updated:** January 2025  
-**Version:** 1.0.0
+**Version:** 1.2.0
