@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, ChevronDown, ChevronRight, CheckCircle, AlertTriangle, Download, Trash2 } from 'lucide-react';
+import { X, ChevronDown, CheckCircle, AlertTriangle, Download, Trash2 } from 'lucide-react';
 import type { UserData } from '../types/user';
 import type { RecurringTask } from '../types/task';
 import RecurringTasksList from './RecurringTasksList';

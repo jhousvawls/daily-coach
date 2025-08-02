@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { XCircle, Sparkles, ArrowRight, ArrowLeft, Target, Zap, Heart, Brain, CheckCircle } from 'lucide-react';
 import { useAI } from '../hooks/useAI';
 import { PLACEHOLDERS } from '../utils/constants';
-import type { ThemeAnalysisResult, FocusCandidate } from '../services/ai';
+import type { ThemeAnalysisResult } from '../services/ai';
 
 interface FocusAssistantProps {
   onClose: () => void;

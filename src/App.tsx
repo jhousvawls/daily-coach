@@ -36,7 +36,7 @@ function App() {
   const [isQuoteLoading, setIsQuoteLoading] = useState(false);
 
   // AI hook
-  const { isGenerating, error: aiError, synthesizeFocus, setApiKey } = useAI();
+  const { setApiKey } = useAI();
 
   // Date helpers
   const today = getToday();
