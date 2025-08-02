@@ -48,12 +48,12 @@ const Header: React.FC<HeaderProps> = ({ setView }) => {
 
   return (
     <>
-      <header className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+      <header className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
           <div className="bg-orange-400 p-2 rounded-lg">
             <CoachIcon className="text-white w-6 h-6" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 capitalize">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 capitalize">
             {APP_NAME.toLowerCase()}
           </h1>
         </div>
@@ -61,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({ setView }) => {
         <div className="flex items-center gap-2">
           {/* Cloud Sync Status */}
           {isAuthenticated && (
-            <div className="flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 rounded-md text-xs">
+            <div className="flex items-center gap-1 px-2 py-1 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-md text-xs">
               <Cloud className="w-3 h-3" />
               <span>Synced</span>
             </div>
@@ -72,34 +72,34 @@ const Header: React.FC<HeaderProps> = ({ setView }) => {
             <div className="relative">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 aria-label="User menu"
               >
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                   <User className="text-white w-4 h-4" />
                 </div>
-                <span className="hidden sm:block text-sm font-medium text-gray-700">
+                <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">
                   {getUserDisplayName()}
                 </span>
               </button>
 
               {/* User Dropdown Menu */}
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-600 z-50">
                   <div className="py-1">
-                    <div className="px-4 py-2 text-sm text-gray-500 border-b">
+                    <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600">
                       {user?.email}
                     </div>
                     <button
                       onClick={() => setView('settings')}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       <Settings className="w-4 h-4" />
                       Settings
                     </button>
                     <button
                       onClick={handleSignOut}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       <LogOut className="w-4 h-4" />
                       Sign Out
@@ -118,10 +118,10 @@ const Header: React.FC<HeaderProps> = ({ setView }) => {
               </button>
               <button
                 onClick={() => setView('settings')}
-                className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 aria-label="Settings"
               >
-                <Settings className="text-gray-500" size={20} />
+                <Settings className="text-gray-500 dark:text-gray-400" size={20} />
               </button>
             </>
           )}
