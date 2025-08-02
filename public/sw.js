@@ -1,7 +1,7 @@
 // Daily Focus Coach Service Worker
-const CACHE_NAME = 'daily-focus-coach-v1.0.0';
-const STATIC_CACHE_NAME = 'daily-focus-coach-static-v1.0.0';
-const DYNAMIC_CACHE_NAME = 'daily-focus-coach-dynamic-v1.0.0';
+const CACHE_NAME = 'daily-focus-coach-v1.0.1';
+const STATIC_CACHE_NAME = 'daily-focus-coach-static-v1.0.1';
+const DYNAMIC_CACHE_NAME = 'daily-focus-coach-dynamic-v1.0.1';
 
 // Files to cache immediately
 const STATIC_ASSETS = [
