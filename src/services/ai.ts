@@ -14,6 +14,25 @@ export interface AIResponse {
   error?: string;
 }
 
+export interface TaskTheme {
+  name: string;
+  tasks: string[];
+  description: string;
+}
+
+export interface FocusCandidate {
+  task: string;
+  theme: string;
+  reasoning: string;
+  impact: 'high' | 'medium' | 'low';
+  effort: 'high' | 'medium' | 'low';
+}
+
+export interface ThemeAnalysisResult {
+  themes: TaskTheme[];
+  candidates: FocusCandidate[];
+}
+
 class AIService {
   private apiKey: string = '';
   private baseUrl = 'https://api.openai.com/v1';
@@ -355,6 +374,287 @@ Only return the quote and author, nothing else. Keep the quote to 1-2 sentences 
     const randomFallback = moodFallbacks[Math.floor(Math.random() * moodFallbacks.length)];
     
     return randomFallback;
+  }
+
+  async analyzeTasksAndGenerateCandidates(brainDump: string): Promise<ThemeAnalysisResult> {
+    const prompt = `Analyze this brain dump of tasks and thoughts. Group them into themes and identify the 2-3 best focus candidates for today.
+
+Brain dump: "${brainDump}"
+
+Respond with valid JSON in this exact format:
+{
+  "themes": [
+    {
+      "name": "Theme Name",
+      "tasks": ["task1", "task2"],
+      "description": "Brief description of this theme"
+    }
+  ],
+  "candidates": [
+    {
+      "task": "Specific actionable task",
+      "theme": "Which theme this belongs to",
+      "reasoning": "Why this is a good focus candidate",
+      "impact": "high|medium|low",
+      "effort": "high|medium|low"
+    }
+  ]
+}
+
+Focus on identifying 2-3 candidates that represent different approaches: highest impact, quick wins, and strategic priorities.`;
+
+    const response = await this.makeRequest('/chat/completions', {
+      model: 'gpt-4',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a productivity expert that analyzes tasks and identifies focus priorities. Always respond with valid JSON only.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      max_tokens: 400,
+      temperature: 0.6,
+    });
+
+    if (response.success && response.data?.choices?.[0]?.message?.content) {
+      try {
+        const result = JSON.parse(response.data.choices[0].message.content);
+        if (result.themes && result.candidates) {
+          return result;
+        }
+      } catch {
+        // JSON parsing failed, return fallback
+      }
+    }
+
+    // Fallback analysis
+    const tasks = brainDump.split(/[,\n]/).map(t => t.trim()).filter(t => t.length > 0);
+    
+    // Categorize tasks into themes based on keywords
+    const workTasks = tasks.filter(t => 
+      t.toLowerCase().includes('report') || 
+      t.toLowerCase().includes('presentation') || 
+      t.toLowerCase().includes('strategy') || 
+      t.toLowerCase().includes('budget') || 
+      t.toLowerCase().includes('meeting') ||
+      t.toLowerCase().includes('adr') ||
+      t.toLowerCase().includes('website')
+    );
+    
+    const personalTasks = tasks.filter(t => 
+      t.toLowerCase().includes('gift') || 
+      t.toLowerCase().includes('anniversary') || 
+      t.toLowerCase().includes('dentist') || 
+      t.toLowerCase().includes('grocery') || 
+      t.toLowerCase().includes('shopping') ||
+      t.toLowerCase().includes('appointment')
+    );
+    
+    const eventTasks = tasks.filter(t => 
+      t.toLowerCase().includes('event') || 
+      t.toLowerCase().includes('party') || 
+      t.toLowerCase().includes('team') ||
+      t.toLowerCase().includes('building')
+    );
+    
+    // Create themes based on categorization
+    const themes = [];
+    if (workTasks.length > 0) {
+      themes.push({
+        name: "Professional Tasks",
+        tasks: workTasks,
+        description: "Work-related priorities and business objectives"
+      });
+    }
+    if (personalTasks.length > 0) {
+      themes.push({
+        name: "Personal Tasks",
+        tasks: personalTasks,
+        description: "Personal errands and appointments"
+      });
+    }
+    if (eventTasks.length > 0) {
+      themes.push({
+        name: "Event Planning",
+        tasks: eventTasks,
+        description: "Event coordination and team activities"
+      });
+    }
+    
+    // If no specific categorization, fall back to priority/supporting
+    if (themes.length === 0) {
+      themes.push(
+        {
+          name: "Priority Tasks",
+          tasks: tasks.slice(0, Math.ceil(tasks.length / 2)),
+          description: "High-priority items that need attention"
+        },
+        {
+          name: "Supporting Tasks",
+          tasks: tasks.slice(Math.ceil(tasks.length / 2)),
+          description: "Supporting activities and follow-ups"
+        }
+      );
+    }
+    
+    // Generate focus candidates
+    const candidates = [];
+    
+    // High impact candidate (usually work-related)
+    if (workTasks.length > 0) {
+      candidates.push({
+        task: workTasks[0],
+        theme: "Professional Tasks",
+        reasoning: "High-impact professional task that drives business results",
+        impact: "high" as const,
+        effort: "high" as const
+      });
+    }
+    
+    // Quick win candidate (usually personal/simple tasks)
+    if (personalTasks.length > 0) {
+      candidates.push({
+        task: personalTasks[0],
+        theme: "Personal Tasks",
+        reasoning: "Quick personal task that can be completed efficiently",
+        impact: "medium" as const,
+        effort: "low" as const
+      });
+    }
+    
+    // Strategic candidate (planning/coordination tasks)
+    if (eventTasks.length > 0) {
+      candidates.push({
+        task: eventTasks[0],
+        theme: "Event Planning",
+        reasoning: "Strategic planning task that benefits the team",
+        impact: "medium" as const,
+        effort: "medium" as const
+      });
+    }
+    
+    // Ensure we have at least 2 candidates
+    if (candidates.length < 2 && tasks.length > 0) {
+      if (candidates.length === 0) {
+        candidates.push({
+          task: tasks[0],
+          theme: themes[0]?.name || "Priority Tasks",
+          reasoning: "This appears to be the most important item on your list",
+          impact: "high" as const,
+          effort: "medium" as const
+        });
+      }
+      
+      if (candidates.length === 1 && tasks.length > 1) {
+        candidates.push({
+          task: tasks[1],
+          theme: themes[themes.length > 1 ? 1 : 0]?.name || "Priority Tasks",
+          reasoning: "This could provide good momentum for the day",
+          impact: "medium" as const,
+          effort: "low" as const
+        });
+      }
+    }
+    
+    return { themes, candidates };
+  }
+
+  async selectFocusByMethod(candidates: FocusCandidate[], method: string): Promise<string> {
+    const prompt = `Given these focus candidates and selection method, choose the best one:
+
+Candidates:
+${candidates.map((c, i) => `${i + 1}. ${c.task} (Impact: ${c.impact}, Effort: ${c.effort})
+   Reasoning: ${c.reasoning}`).join('\n\n')}
+
+Selection Method: ${method}
+
+Based on the "${method}" approach, select the most appropriate candidate and return just the task text, nothing else.`;
+
+    const response = await this.makeRequest('/chat/completions', {
+      model: 'gpt-4',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a productivity coach. Select the best task based on the given method and return only the task text.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      max_tokens: 100,
+      temperature: 0.5,
+    });
+
+    if (response.success && response.data?.choices?.[0]?.message?.content) {
+      return response.data.choices[0].message.content.trim();
+    }
+
+    // Fallback selection based on method
+    if (candidates.length === 0) {
+      return "Focus on your most important task today";
+    }
+
+    switch (method) {
+      case 'highest_impact':
+        return candidates.find(c => c.impact === 'high')?.task || candidates[0].task;
+      case 'quick_win':
+        return candidates.find(c => c.effort === 'low')?.task || candidates[0].task;
+      case 'personal_priority':
+        return candidates.find(c => c.theme.toLowerCase().includes('personal'))?.task || candidates[0].task;
+      default:
+        return candidates[0].task;
+    }
+  }
+
+  async generateSubtaskBreakdown(focus: string): Promise<string[]> {
+    const prompt = `Break down this focus task into 3-5 specific, actionable subtasks:
+
+Focus Task: "${focus}"
+
+Provide subtasks that are:
+- Specific and concrete
+- Can be completed in 30-60 minutes each
+- Build logically toward completing the main task
+- Actionable today
+
+Respond with a JSON array of subtask strings only.`;
+
+    const response = await this.makeRequest('/chat/completions', {
+      model: 'gpt-4',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a task breakdown expert. Provide responses in valid JSON array format only.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      max_tokens: 200,
+      temperature: 0.6,
+    });
+
+    if (response.success && response.data?.choices?.[0]?.message?.content) {
+      try {
+        const subtasks = JSON.parse(response.data.choices[0].message.content);
+        return Array.isArray(subtasks) ? subtasks : [];
+      } catch {
+        // JSON parsing failed, return fallback
+      }
+    }
+
+    // Fallback breakdown
+    return [
+      "Plan and gather necessary resources",
+      "Start with the first concrete step",
+      "Complete the main work portion",
+      "Review and finalize the task"
+    ];
   }
 }
 

@@ -13,7 +13,8 @@ import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import Settings from './components/Settings';
 import YesterdayCheckin from './components/YesterdayCheckin';
-import BrainDumpModal from './components/BrainDumpModal';
+import FocusAssistant from './components/FocusAssistant';
+import UpdateNotification from './components/UpdateNotification';
 
 function App() {
   // Core state
@@ -281,14 +282,39 @@ function App() {
     );
   };
 
-  const handleSynthesizeFocus = async (brainDump: string) => {
-    if (!brainDump.trim()) return;
-    
-    const result = await synthesizeFocus(brainDump);
-    if (result) {
-      setTodayFocus(result);
-      setShowAiModal(false);
-    }
+  const handleFocusSelected = (focus: string, method: string, subtasks?: string[]) => {
+    // Set the focus as today's task
+    setTodayFocus(focus);
+    setDailyTasks(prev => ({
+      ...prev,
+      [today]: { text: focus, completed: false }
+    }));
+    setIsFocusSet(true);
+
+    // Update user data with daily focus information
+    const dailyFocus = {
+      current: focus,
+      date: today,
+      method: method as 'highest_impact' | 'quick_win' | 'personal_priority' | 'ai_decide',
+      subtasks,
+      history: [
+        ...(userData.dailyFocus?.history || []),
+        {
+          focus,
+          date: today,
+          method: method as 'highest_impact' | 'quick_win' | 'personal_priority' | 'ai_decide',
+          completed: false
+        }
+      ]
+    };
+
+    setUserData(prev => ({
+      ...prev,
+      dailyFocus
+    }));
+
+    // Close the modal
+    setShowAiModal(false);
   };
 
   const handleUpdateUserData = (updates: Partial<UserData>) => {
@@ -380,13 +406,11 @@ function App() {
           />
         )}
 
-        {/* AI Brain Dump Modal */}
+        {/* AI Focus Assistant */}
         {showAiModal && (
-          <BrainDumpModal
+          <FocusAssistant
             onClose={() => setShowAiModal(false)}
-            onSynthesize={handleSynthesizeFocus}
-            isGenerating={isGenerating}
-            error={aiError}
+            onFocusSelected={handleFocusSelected}
           />
         )}
 
@@ -432,6 +456,9 @@ function App() {
             />
           )}
         </main>
+
+        {/* PWA Update Notification */}
+        <UpdateNotification />
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
   "name": "Daily Focus Coach",
   "short_name": "Focus Coach",
   "description": "AI-powered daily focus coach to help you identify and complete your most important tasks",
+  "version": "1.0.0",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F3F4F6",
