@@ -191,15 +191,43 @@ Optimized caching headers for different file types:
 - Old version persists after deployment
 
 **Solutions:**
-1. **Force Close and Reopen PWA**:
+1. **Check Vercel Deployment Status**:
+   ```bash
+   # Check recent deployments
+   npx vercel ls
+   
+   # Look for:
+   # - Recent deployment with "Ready" status
+   # - Any "Error" status deployments
+   # - Deployment age (should be recent)
+   ```
+
+2. **Verify Build Success**:
+   ```bash
+   # Test local build
+   npm run build
+   
+   # Check for TypeScript errors or build failures
+   # Fix any errors before deploying
+   ```
+
+3. **Check Vercel Build Logs**:
+   ```bash
+   # Get detailed logs for failed deployment
+   npx vercel inspect [deployment-url] --logs
+   
+   # Or visit Vercel dashboard to view build logs
+   ```
+
+4. **Force Close and Reopen PWA**:
    - iPhone: Swipe up, swipe away PWA, reopen
    - Mac: Cmd+Q to quit, relaunch
 
-2. **Clear PWA Cache**:
+5. **Clear PWA Cache**:
    - iPhone: Settings > General > iPhone Storage > [PWA] > Offload App
    - Mac: Use debug panel "Clear Cache" button
 
-3. **Check Service Worker**:
+6. **Check Service Worker**:
    - Open PWA in Safari
    - Enable Developer menu: Safari > Preferences > Advanced > Show Develop menu
    - Develop > [Device] > Web Inspector > Console
