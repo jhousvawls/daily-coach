@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, ChevronDown, ChevronRight, CheckCircle, AlertTriangle } from 'lucide-react';
 import type { UserData } from '../types/user';
 import type { RecurringTask } from '../types/task';
 import RecurringTasksList from './RecurringTasksList';
@@ -25,6 +25,7 @@ const Settings: React.FC<SettingsProps> = ({
   const [tempTheme, setTempTheme] = useState(userData.preferences.theme);
   const [tempShowDailyQuote, setTempShowDailyQuote] = useState(userData.preferences.showDailyQuote);
   const [showThemeDropdown, setShowThemeDropdown] = useState(false);
+  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   
   const themeDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -79,32 +80,6 @@ const Settings: React.FC<SettingsProps> = ({
         </div>
         
         <div className="space-y-6">
-          {/* API Key Section */}
-          <div>
-            <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              OpenAI API Key
-            </label>
-            <input
-              type="password"
-              id="apiKey"
-              value={tempApiKey}
-              onChange={(e) => setTempApiKey(e.target.value)}
-              placeholder="sk-..."
-              className="w-full p-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-shadow bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
-            />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Required for AI-generated quotes and focus synthesis. Get your API key from{' '}
-              <a 
-                href="https://platform.openai.com/api-keys" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-orange-500 hover:text-orange-600 underline"
-              >
-                OpenAI Platform
-              </a>
-            </p>
-          </div>
-
           {/* Theme Section */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -186,6 +161,93 @@ const Settings: React.FC<SettingsProps> = ({
                 <div className="text-sm text-gray-500 dark:text-gray-400">Total Tasks</div>
               </div>
             </div>
+          </div>
+
+          {/* Advanced Settings Section */}
+          <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+            <button
+              onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            >
+              {showAdvancedSettings ? (
+                <ChevronDown size={16} />
+              ) : (
+                <ChevronRight size={16} />
+              )}
+              Advanced Settings
+            </button>
+
+            {showAdvancedSettings && (
+              <div className="mt-4 space-y-4">
+                {/* API Key Status and Override */}
+                <div>
+                  {(() => {
+                    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+                    const hasEnvKey = !!envApiKey;
+                    const hasUserKey = !!(tempApiKey && tempApiKey.trim());
+                    
+                    return (
+                      <div className="space-y-3">
+                        {/* Status Display */}
+                        <div className="flex items-center gap-2 p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                          {hasEnvKey ? (
+                            <>
+                              <CheckCircle size={16} className="text-green-500" />
+                              <span className="text-sm text-gray-700 dark:text-gray-300">
+                                ✅ Shared API key is active. AI features are enabled for all users.
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <AlertTriangle size={16} className="text-yellow-500" />
+                              <span className="text-sm text-gray-700 dark:text-gray-300">
+                                ⚠️ No shared API key found. Add your personal API key below to enable AI features.
+                              </span>
+                            </>
+                          )}
+                        </div>
+
+                        {/* API Key Override Input */}
+                        <div>
+                          <label htmlFor="apiKeyOverride" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            {hasEnvKey ? 'Personal API Key (Optional Override)' : 'OpenAI API Key (Required)'}
+                          </label>
+                          <input
+                            type="password"
+                            id="apiKeyOverride"
+                            value={tempApiKey}
+                            onChange={(e) => setTempApiKey(e.target.value)}
+                            placeholder={hasEnvKey ? "sk-... (optional - leave empty to use shared key)" : "sk-... (required for AI features)"}
+                            className="w-full p-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-shadow bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                          />
+                          <div className="mt-2 space-y-1">
+                            {hasUserKey && hasEnvKey && (
+                              <p className="text-xs text-blue-600 dark:text-blue-400">
+                                🔄 Your personal API key will override the shared key for your account.
+                              </p>
+                            )}
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {hasEnvKey 
+                                ? "Optional: Use your own OpenAI API key to control costs or access different models."
+                                : "Required for AI-generated quotes and focus synthesis."
+                              } Get your API key from{' '}
+                              <a 
+                                href="https://platform.openai.com/api-keys" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-orange-500 hover:text-orange-600 underline"
+                              >
+                                OpenAI Platform
+                              </a>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
