@@ -94,10 +94,16 @@ function App() {
   // Initialize daily quote
   useEffect(() => {
     const loadDailyQuote = async () => {
+      const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+      const userApiKey = userData.apiKey;
+      const hasApiKey = !!(envApiKey || (userApiKey && userApiKey.trim()));
+
       console.log('Loading daily quote...', {
         showDailyQuote: userData.preferences.showDailyQuote,
-        hasApiKey: !!userData.apiKey,
-        apiKeyLength: userData.apiKey?.length || 0,
+        hasEnvApiKey: !!envApiKey,
+        hasUserApiKey: !!(userApiKey && userApiKey.trim()),
+        envApiKeyLength: envApiKey?.length || 0,
+        userApiKeyLength: userApiKey?.length || 0,
         today
       });
 
@@ -115,11 +121,18 @@ function App() {
         return;
       }
 
-      // Generate new quote for today
-      if (userData.apiKey && userData.apiKey.trim()) {
-        console.log('Generating new quote with API key...');
+      // Generate new quote for today if we have any API key
+      if (hasApiKey) {
+        console.log('Generating new quote with API key...', {
+          usingEnvKey: !!envApiKey,
+          usingUserKey: !envApiKey && !!(userApiKey && userApiKey.trim())
+        });
         setIsQuoteLoading(true);
-        aiService.setApiKey(userData.apiKey);
+        
+        // Set user API key if no environment key (for backward compatibility)
+        if (!envApiKey && userApiKey) {
+          aiService.setApiKey(userApiKey);
+        }
         
         try {
           const { quote, author } = await aiService.generateDailyQuote('motivational');
@@ -142,7 +155,7 @@ function App() {
             date: today,
             mood: 'motivational'
           };
-          console.log('Using fallback quote:', fallbackQuote);
+          console.log('Using fallback quote after error:', fallbackQuote);
           storage.setDailyQuote(today, fallbackQuote);
           setDailyQuote(fallbackQuote);
         } finally {
@@ -286,22 +299,35 @@ function App() {
   };
 
   const handleRefreshQuote = async (mood: string) => {
+    const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    const userApiKey = userData.apiKey;
+    const hasApiKey = !!(envApiKey || (userApiKey && userApiKey.trim()));
+
     console.log('Refreshing quote...', {
       mood,
-      hasApiKey: !!userData.apiKey,
-      apiKeyLength: userData.apiKey?.length || 0
+      hasEnvApiKey: !!envApiKey,
+      hasUserApiKey: !!(userApiKey && userApiKey.trim()),
+      envApiKeyLength: envApiKey?.length || 0,
+      userApiKeyLength: userApiKey?.length || 0
     });
 
-    if (!userData.apiKey || !userData.apiKey.trim()) {
+    if (!hasApiKey) {
       console.error('No API key available for quote refresh');
       return;
     }
 
     setIsQuoteLoading(true);
-    aiService.setApiKey(userData.apiKey);
+    
+    // Set user API key if no environment key (for backward compatibility)
+    if (!envApiKey && userApiKey) {
+      aiService.setApiKey(userApiKey);
+    }
     
     try {
-      console.log('Calling aiService.generateDailyQuote with mood:', mood);
+      console.log('Calling aiService.generateDailyQuote with mood:', mood, {
+        usingEnvKey: !!envApiKey,
+        usingUserKey: !envApiKey && !!(userApiKey && userApiKey.trim())
+      });
       const { quote, author } = await aiService.generateDailyQuote(mood);
       const newQuote: DailyQuote = {
         quote,

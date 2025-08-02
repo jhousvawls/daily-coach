@@ -22,8 +22,15 @@ class AIService {
     this.apiKey = key;
   }
 
+  private getApiKey(): string {
+    // Check for environment variable first, then user-provided key
+    const envKey = import.meta.env.VITE_OPENAI_API_KEY;
+    return envKey || this.apiKey;
+  }
+
   private async makeRequest(endpoint: string, data: any): Promise<AIResponse> {
-    if (!this.apiKey) {
+    const apiKey = this.getApiKey();
+    if (!apiKey) {
       return { success: false, error: 'API key not configured' };
     }
 
@@ -32,7 +39,7 @@ class AIService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify(data),
       });
