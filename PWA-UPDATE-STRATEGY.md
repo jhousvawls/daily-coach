@@ -44,7 +44,7 @@ The PWA update strategy consists of several components working together to provi
 The service worker implements a versioned caching strategy:
 
 ```javascript
-const CACHE_NAME = 'daily-focus-coach-v1.0.0';
+const CACHE_NAME = 'daily-focus-coach-v1.0.1';
 ```
 
 **Key Features:**
