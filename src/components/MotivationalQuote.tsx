@@ -15,8 +15,6 @@ interface MotivationalQuoteProps {
   enabled: boolean;
 }
 
-type QuoteMood = 'motivational' | 'business' | 'funny' | 'dad-joke';
-
 const MOOD_OPTIONS = [
   { value: 'motivational', label: 'Motivational', emoji: '🎯', description: 'Drive and focus' },
   { value: 'business', label: 'Business-focused', emoji: '💼', description: 'Leadership and strategy' },
