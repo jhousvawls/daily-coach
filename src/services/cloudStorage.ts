@@ -129,10 +129,11 @@ export class CloudStorageService {
     const dailyTasks: { [date: string]: DailyTask } = {}
     
     data?.forEach(task => {
-      dailyTasks[task.date] = {
-        text: task.text,
-        completed: task.completed,
-        completedAt: task.completed_at
+      const taskDate = task.date as string
+      dailyTasks[taskDate] = {
+        text: task.text as string,
+        completed: task.completed as boolean,
+        completedAt: task.completed_at as string | undefined
       }
     })
     

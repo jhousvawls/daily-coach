@@ -18,7 +18,7 @@ export const getSupabase = () => {
 
 // For backward compatibility, export a getter that only initializes when accessed
 export const supabase = new Proxy({} as ReturnType<typeof createClient>, {
-  get(target, prop) {
+  get(_target, prop) {
     return getSupabase()[prop as keyof ReturnType<typeof createClient>]
   }
 })
