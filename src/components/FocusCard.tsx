@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Sparkles, CheckCircle2, RefreshCw } from 'lucide-react';
 import type { DailyTask } from '../types/task';
 import { MESSAGES, PLACEHOLDERS } from '../utils/constants';
 
@@ -11,6 +11,7 @@ interface FocusCardProps {
   onSetFocus: () => void;
   onCompleteTodayTask: () => void;
   onShowAiModal: () => void;
+  onRefreshFocus: () => void;
 }
 
 const FocusCard: React.FC<FocusCardProps> = ({
@@ -21,10 +22,22 @@ const FocusCard: React.FC<FocusCardProps> = ({
   onSetFocus,
   onCompleteTodayTask,
   onShowAiModal,
+  onRefreshFocus,
 }) => {
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 transition-colors duration-200">
-      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">Today's Focus</h2>
+      <div className="flex items-center justify-between mb-1">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Today's Focus</h2>
+        {isFocusSet && (
+          <button
+            onClick={onRefreshFocus}
+            className="p-2 text-gray-500 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
+            title="Change today's focus"
+          >
+            <RefreshCw size={18} />
+          </button>
+        )}
+      </div>
       <p className="text-gray-500 dark:text-gray-400 mb-4">{MESSAGES.FOCUS_QUESTION}</p>
 
       {!isFocusSet ? (

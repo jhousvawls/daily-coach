@@ -30,6 +30,7 @@ interface DashboardProps {
   onToggleTinyGoal: (goalId: number) => void;
   onShowAiModal: () => void;
   onRefreshQuote: (mood: string) => void;
+  onRefreshFocus: () => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
@@ -52,6 +53,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   onToggleTinyGoal,
   onShowAiModal,
   onRefreshQuote,
+  onRefreshFocus,
 }) => {
   return (
     <div className="space-y-6">
@@ -72,6 +74,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         onSetFocus={onSetFocus}
         onCompleteTodayTask={onCompleteTodayTask}
         onShowAiModal={onShowAiModal}
+        onRefreshFocus={onRefreshFocus}
       />
 
       {/* Progress Tracker - Full Width */}

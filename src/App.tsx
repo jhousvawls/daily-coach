@@ -356,6 +356,13 @@ function App() {
     }
   };
 
+  const handleRefreshFocus = () => {
+    // If current task is completed, it's already saved in storage
+    // Reset to input mode to allow setting a new focus
+    setIsFocusSet(false);
+    setTodayFocus('');
+  };
+
   // Calculate stats
   const completedTasksCount = Object.values(dailyTasks).filter(t => t.completed).length;
   const totalTasks = Object.keys(dailyTasks).length;
@@ -421,6 +428,7 @@ function App() {
               onToggleTinyGoal={handleToggleTinyGoal}
               onShowAiModal={() => setShowAiModal(true)}
               onRefreshQuote={handleRefreshQuote}
+              onRefreshFocus={handleRefreshFocus}
             />
           )}
         </main>
