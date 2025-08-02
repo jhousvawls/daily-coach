@@ -21,8 +21,6 @@ const Settings: React.FC<SettingsProps> = ({
   onCompleteRecurringTask,
   onBack 
 }) => {
-  const [tempReminderTime, setTempReminderTime] = useState(userData.preferences.reminderTime);
-  const [tempNotifications, setTempNotifications] = useState(userData.preferences.notifications);
   const [tempTheme, setTempTheme] = useState(userData.preferences.theme);
   const [tempShowDailyQuote, setTempShowDailyQuote] = useState(userData.preferences.showDailyQuote);
   const [showThemeDropdown, setShowThemeDropdown] = useState(false);
@@ -47,8 +45,6 @@ const Settings: React.FC<SettingsProps> = ({
     onUpdateUserData({
       preferences: {
         ...userData.preferences,
-        reminderTime: tempReminderTime,
-        notifications: tempNotifications,
         theme: tempTheme,
         showDailyQuote: tempShowDailyQuote,
       },
@@ -58,8 +54,6 @@ const Settings: React.FC<SettingsProps> = ({
 
   const handleCancel = () => {
     // Reset to original values
-    setTempReminderTime(userData.preferences.reminderTime);
-    setTempNotifications(userData.preferences.notifications);
     setTempTheme(userData.preferences.theme);
     setTempShowDailyQuote(userData.preferences.showDailyQuote);
     setShowThemeDropdown(false);
@@ -123,40 +117,6 @@ const Settings: React.FC<SettingsProps> = ({
             </div>
           </div>
 
-          {/* Reminder Time Section */}
-          <div>
-            <label htmlFor="reminderTime" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Daily Reminder Time
-            </label>
-            <input
-              type="time"
-              id="reminderTime"
-              value={tempReminderTime}
-              onChange={(e) => setTempReminderTime(e.target.value)}
-              className="w-full p-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-shadow bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
-            />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              When would you like to be reminded to set your daily focus?
-            </p>
-          </div>
-
-          {/* Notifications Section */}
-          <div>
-            <label className="flex items-center space-x-3">
-              <input
-                type="checkbox"
-                checked={tempNotifications}
-                onChange={(e) => setTempNotifications(e.target.checked)}
-                className="w-4 h-4 text-orange-400 border-gray-300 dark:border-gray-600 rounded focus:ring-orange-400 focus:ring-2 bg-white dark:bg-gray-700"
-              />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Enable notifications
-              </span>
-            </label>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-7">
-              Receive reminders and motivational messages.
-            </p>
-          </div>
 
           {/* Daily Quote Section */}
           <div>
