@@ -1,6 +1,6 @@
 # Daily Focus Coach
 
-🌐 **Live App**: https://daily-focus-coach.vercel.app
+🌐 **Live App**: https://daily-focus-coach-9eyd3we4p-johns-projects-58c2e0cf.vercel.app
 
 An AI-powered daily focus coach that helps you identify and complete your most important tasks while tracking progress toward bigger goals.
 
@@ -122,7 +122,7 @@ src/
 ## Deployment
 
 ### 🌐 Live Production App
-- **URL**: https://daily-focus-coach.vercel.app
+- **URL**: https://daily-focus-coach-9eyd3we4p-johns-projects-58c2e0cf.vercel.app
 - **Platform**: Vercel
 - **Status**: ✅ Live and fully functional
 - **Auto-Deploy**: Enabled on GitHub pushes

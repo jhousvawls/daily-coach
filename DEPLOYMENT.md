@@ -2,7 +2,7 @@
 
 ## 🌐 Live Production Deployment
 
-**Current Live App**: https://daily-focus-coach.vercel.app
+**Current Live App**: https://daily-focus-coach-9eyd3we4p-johns-projects-58c2e0cf.vercel.app
 - **Platform**: Vercel
 - **Status**: ✅ Live and fully functional
 - **Last Updated**: January 1, 2025
