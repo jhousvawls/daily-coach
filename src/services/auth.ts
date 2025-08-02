@@ -1,12 +1,28 @@
-import { supabase } from './supabase'
+import { getSupabase } from './supabase'
 import type { AuthUser, SignUpData, SignInData, AuthResponse } from '../types/auth'
 
 export class AuthService {
+  private isSupabaseAvailable(): boolean {
+    try {
+      getSupabase()
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  private getSupabaseClient() {
+    if (!this.isSupabaseAvailable()) {
+      throw new Error('Cloud sync is not available. Please check your configuration.')
+    }
+    return getSupabase()
+  }
   /**
    * Sign up a new user with email and password
    */
   async signUp({ email, password, fullName }: SignUpData): Promise<AuthResponse> {
     try {
+      const supabase = this.getSupabaseClient()
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -35,6 +51,7 @@ export class AuthService {
    */
   async signIn({ email, password }: SignInData): Promise<AuthResponse> {
     try {
+      const supabase = this.getSupabaseClient()
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -58,6 +75,7 @@ export class AuthService {
    */
   async signOut(): Promise<{ error: string | null }> {
     try {
+      const supabase = this.getSupabaseClient()
       const { error } = await supabase.auth.signOut()
       
       if (error) {
@@ -77,6 +95,7 @@ export class AuthService {
    */
   async getCurrentUser(): Promise<{ user: AuthUser | null; error: string | null }> {
     try {
+      const supabase = this.getSupabaseClient()
       const { data, error } = await supabase.auth.getUser()
 
       if (error) {
@@ -96,9 +115,21 @@ export class AuthService {
    * Listen for authentication state changes
    */
   onAuthStateChange(callback: (user: AuthUser | null) => void) {
-    return supabase.auth.onAuthStateChange((_event, session) => {
-      callback(session?.user ?? null)
-    })
+    try {
+      const supabase = this.getSupabaseClient()
+      return supabase.auth.onAuthStateChange((_event: any, session: any) => {
+        callback(session?.user ?? null)
+      })
+    } catch (error) {
+      // Return a dummy subscription if Supabase is not available
+      return {
+        data: {
+          subscription: {
+            unsubscribe: () => {}
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -106,6 +137,7 @@ export class AuthService {
    */
   async getSession() {
     try {
+      const supabase = this.getSupabaseClient()
       const { data, error } = await supabase.auth.getSession()
       
       if (error) {
@@ -126,6 +158,7 @@ export class AuthService {
    */
   async resetPassword(email: string): Promise<{ error: string | null }> {
     try {
+      const supabase = this.getSupabaseClient()
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       })
@@ -147,6 +180,7 @@ export class AuthService {
    */
   async updatePassword(password: string): Promise<{ error: string | null }> {
     try {
+      const supabase = this.getSupabaseClient()
       const { error } = await supabase.auth.updateUser({ password })
 
       if (error) {
@@ -166,6 +200,7 @@ export class AuthService {
    */
   async updateProfile(updates: { fullName?: string; avatarUrl?: string }): Promise<{ error: string | null }> {
     try {
+      const supabase = this.getSupabaseClient()
       const { error } = await supabase.auth.updateUser({
         data: {
           full_name: updates.fullName,
