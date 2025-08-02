@@ -21,6 +21,7 @@ const Settings: React.FC<SettingsProps> = ({
   onCompleteRecurringTask,
   onBack 
 }) => {
+  const [tempApiKey, setTempApiKey] = useState(userData.apiKey || '');
   const [tempTheme, setTempTheme] = useState(userData.preferences.theme);
   const [tempShowDailyQuote, setTempShowDailyQuote] = useState(userData.preferences.showDailyQuote);
   const [showThemeDropdown, setShowThemeDropdown] = useState(false);
@@ -43,6 +44,7 @@ const Settings: React.FC<SettingsProps> = ({
 
   const handleSave = () => {
     onUpdateUserData({
+      apiKey: tempApiKey,
       preferences: {
         ...userData.preferences,
         theme: tempTheme,
@@ -54,6 +56,7 @@ const Settings: React.FC<SettingsProps> = ({
 
   const handleCancel = () => {
     // Reset to original values
+    setTempApiKey(userData.apiKey || '');
     setTempTheme(userData.preferences.theme);
     setTempShowDailyQuote(userData.preferences.showDailyQuote);
     setShowThemeDropdown(false);
@@ -76,6 +79,32 @@ const Settings: React.FC<SettingsProps> = ({
         </div>
         
         <div className="space-y-6">
+          {/* API Key Section */}
+          <div>
+            <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              OpenAI API Key
+            </label>
+            <input
+              type="password"
+              id="apiKey"
+              value={tempApiKey}
+              onChange={(e) => setTempApiKey(e.target.value)}
+              placeholder="sk-..."
+              className="w-full p-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-shadow bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Required for AI-generated quotes and focus synthesis. Get your API key from{' '}
+              <a 
+                href="https://platform.openai.com/api-keys" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-orange-500 hover:text-orange-600 underline"
+              >
+                OpenAI Platform
+              </a>
+            </p>
+          </div>
+
           {/* Theme Section */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

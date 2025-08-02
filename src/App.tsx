@@ -94,7 +94,15 @@ function App() {
   // Initialize daily quote
   useEffect(() => {
     const loadDailyQuote = async () => {
+      console.log('Loading daily quote...', {
+        showDailyQuote: userData.preferences.showDailyQuote,
+        hasApiKey: !!userData.apiKey,
+        apiKeyLength: userData.apiKey?.length || 0,
+        today
+      });
+
       if (!userData.preferences.showDailyQuote) {
+        console.log('Daily quote disabled in preferences');
         setDailyQuote(null);
         return;
       }
@@ -102,12 +110,14 @@ function App() {
       // Check if we already have a quote for today
       const existingQuote = storage.getDailyQuote(today);
       if (existingQuote) {
+        console.log('Found existing quote for today:', existingQuote);
         setDailyQuote(existingQuote);
         return;
       }
 
       // Generate new quote for today
-      if (userData.apiKey) {
+      if (userData.apiKey && userData.apiKey.trim()) {
+        console.log('Generating new quote with API key...');
         setIsQuoteLoading(true);
         aiService.setApiKey(userData.apiKey);
         
@@ -120,6 +130,7 @@ function App() {
             mood: 'motivational'
           };
           
+          console.log('Generated new quote:', newQuote);
           storage.setDailyQuote(today, newQuote);
           setDailyQuote(newQuote);
         } catch (error) {
@@ -131,11 +142,24 @@ function App() {
             date: today,
             mood: 'motivational'
           };
+          console.log('Using fallback quote:', fallbackQuote);
           storage.setDailyQuote(today, fallbackQuote);
           setDailyQuote(fallbackQuote);
         } finally {
           setIsQuoteLoading(false);
         }
+      } else {
+        console.log('No API key available for quote generation');
+        // Set a fallback quote when no API key
+        const fallbackQuote: DailyQuote = {
+          quote: "The way to get started is to quit talking and begin doing.",
+          author: "Walt Disney",
+          date: today,
+          mood: 'motivational'
+        };
+        console.log('Using fallback quote (no API key):', fallbackQuote);
+        storage.setDailyQuote(today, fallbackQuote);
+        setDailyQuote(fallbackQuote);
       }
     };
 
@@ -262,12 +286,22 @@ function App() {
   };
 
   const handleRefreshQuote = async (mood: string) => {
-    if (!userData.apiKey) return;
+    console.log('Refreshing quote...', {
+      mood,
+      hasApiKey: !!userData.apiKey,
+      apiKeyLength: userData.apiKey?.length || 0
+    });
+
+    if (!userData.apiKey || !userData.apiKey.trim()) {
+      console.error('No API key available for quote refresh');
+      return;
+    }
 
     setIsQuoteLoading(true);
     aiService.setApiKey(userData.apiKey);
     
     try {
+      console.log('Calling aiService.generateDailyQuote with mood:', mood);
       const { quote, author } = await aiService.generateDailyQuote(mood);
       const newQuote: DailyQuote = {
         quote,
@@ -276,10 +310,21 @@ function App() {
         mood
       };
       
+      console.log('Successfully generated new quote:', newQuote);
       storage.setDailyQuote(today, newQuote);
       setDailyQuote(newQuote);
     } catch (error) {
       console.error('Failed to refresh daily quote:', error);
+      // Show fallback quote on error
+      const fallbackQuote: DailyQuote = {
+        quote: "The way to get started is to quit talking and begin doing.",
+        author: "Walt Disney",
+        date: today,
+        mood
+      };
+      console.log('Using fallback quote after error:', fallbackQuote);
+      storage.setDailyQuote(today, fallbackQuote);
+      setDailyQuote(fallbackQuote);
     } finally {
       setIsQuoteLoading(false);
     }
