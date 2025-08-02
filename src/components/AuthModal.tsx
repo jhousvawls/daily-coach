@@ -88,8 +88,26 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signin' }: AuthModal
 
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-600 text-sm">{error}</p>
+            <div className={`mb-4 p-3 rounded-md ${
+              error.includes('Cloud sync is not available') 
+                ? 'bg-yellow-50 border border-yellow-200' 
+                : 'bg-red-50 border border-red-200'
+            }`}>
+              <p className={`text-sm ${
+                error.includes('Cloud sync is not available') 
+                  ? 'text-yellow-700' 
+                  : 'text-red-600'
+              }`}>
+                {error.includes('Cloud sync is not available') 
+                  ? 'Cloud sync is currently unavailable. You can still use the app with local storage - your data will be saved on this device.'
+                  : error
+                }
+              </p>
+              {error.includes('Cloud sync is not available') && (
+                <p className="text-xs text-yellow-600 mt-1">
+                  All features including daily quotes work normally without cloud sync.
+                </p>
+              )}
             </div>
           )}
 
