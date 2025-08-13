@@ -6,6 +6,7 @@ import { aiService } from './services/ai';
 import type { Goals, TinyGoal } from './types/goal';
 import type { DailyTasks, RecurringTask } from './types/task';
 import type { UserData } from './types/user';
+import type { AchievementStats } from './types/achievement';
 import type { DailyQuote } from './services/storage';
 
 // Components
@@ -15,6 +16,7 @@ import Settings from './components/Settings';
 import YesterdayCheckin from './components/YesterdayCheckin';
 import FocusAssistant from './components/FocusAssistant';
 import UpdateNotification from './components/UpdateNotification';
+import DateNavigator from './components/DateNavigator';
 
 function App() {
   // Core state
@@ -24,6 +26,9 @@ function App() {
   const [dailyTasks, setDailyTasks] = useState<DailyTasks>(() => storage.getDailyTasks());
   const [recurringTasks, setRecurringTasks] = useState<RecurringTask[]>(() => storage.getRecurringTasks());
   const [userData, setUserData] = useState<UserData>(() => storage.getUserData());
+
+  // Date state - always default to today
+  const [selectedDate, setSelectedDate] = useState<string>(() => getToday());
 
   // UI state
   const [showYesterdayCheckin, setShowYesterdayCheckin] = useState(true);
@@ -35,14 +40,24 @@ function App() {
   const [dailyQuote, setDailyQuote] = useState<DailyQuote | null>(null);
   const [isQuoteLoading, setIsQuoteLoading] = useState(false);
 
+  // Achievement state
+  const [achievementStats, setAchievementStats] = useState<AchievementStats>(() => 
+    storage.getAchievementStats()
+  );
+
   // AI hook
   const { setApiKey } = useAI();
 
   // Date helpers
   const today = getToday();
   const yesterday = getYesterday();
+  const isToday = selectedDate === today;
   const yesterdayTask = dailyTasks[yesterday];
   const todayTask = dailyTasks[today] || { text: '', completed: false };
+  
+  // Selected date data
+  const selectedTask = dailyTasks[selectedDate] || { text: '', completed: false };
+  const hasDataForSelectedDate = storage.hasDataForDate(selectedDate);
 
   // Initialize API key and check if focus is already set
   useEffect(() => {
@@ -92,7 +107,7 @@ function App() {
     storage.setUserData(userData);
   }, [userData]);
 
-  // Initialize daily quote
+  // Load quote for selected date
   useEffect(() => {
     const loadDailyQuote = async () => {
       const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
@@ -100,12 +115,12 @@ function App() {
       const hasApiKey = !!(envApiKey || (userApiKey && userApiKey.trim()));
 
       console.log('Loading daily quote...', {
+        selectedDate,
         showDailyQuote: userData.preferences.showDailyQuote,
         hasEnvApiKey: !!envApiKey,
         hasUserApiKey: !!(userApiKey && userApiKey.trim()),
         envApiKeyLength: envApiKey?.length || 0,
-        userApiKeyLength: userApiKey?.length || 0,
-        today
+        userApiKeyLength: userApiKey?.length || 0
       });
 
       if (!userData.preferences.showDailyQuote) {
@@ -114,17 +129,17 @@ function App() {
         return;
       }
 
-      // Check if we already have a quote for today
-      const existingQuote = storage.getDailyQuote(today);
+      // Check if we already have a quote for the selected date
+      const existingQuote = await storage.getDailyQuote(selectedDate);
       if (existingQuote) {
-        console.log('Found existing quote for today:', existingQuote);
+        console.log('Found existing quote for selected date:', existingQuote);
         setDailyQuote(existingQuote);
         return;
       }
 
-      // Generate new quote for today if we have any API key
-      if (hasApiKey) {
-        console.log('Generating new quote with API key...', {
+      // Only generate new quotes for today, show null for historical dates without quotes
+      if (selectedDate === today && hasApiKey) {
+        console.log('Generating new quote for today with API key...', {
           usingEnvKey: !!envApiKey,
           usingUserKey: !envApiKey && !!(userApiKey && userApiKey.trim())
         });
@@ -140,12 +155,12 @@ function App() {
           const newQuote: DailyQuote = {
             quote,
             author,
-            date: today,
+            date: selectedDate,
             mood: 'motivational'
           };
           
           console.log('Generated new quote:', newQuote);
-          storage.setDailyQuote(today, newQuote);
+          await storage.setDailyQuote(selectedDate, newQuote);
           setDailyQuote(newQuote);
         } catch (error) {
           console.error('Failed to generate daily quote:', error);
@@ -153,32 +168,36 @@ function App() {
           const fallbackQuote: DailyQuote = {
             quote: "The way to get started is to quit talking and begin doing.",
             author: "Walt Disney",
-            date: today,
+            date: selectedDate,
             mood: 'motivational'
           };
           console.log('Using fallback quote after error:', fallbackQuote);
-          storage.setDailyQuote(today, fallbackQuote);
+          await storage.setDailyQuote(selectedDate, fallbackQuote);
           setDailyQuote(fallbackQuote);
         } finally {
           setIsQuoteLoading(false);
         }
-      } else {
+      } else if (selectedDate === today) {
         console.log('No API key available for quote generation');
-        // Set a fallback quote when no API key
+        // Set a fallback quote when no API key for today
         const fallbackQuote: DailyQuote = {
           quote: "The way to get started is to quit talking and begin doing.",
           author: "Walt Disney",
-          date: today,
+          date: selectedDate,
           mood: 'motivational'
         };
         console.log('Using fallback quote (no API key):', fallbackQuote);
-        storage.setDailyQuote(today, fallbackQuote);
+        await storage.setDailyQuote(selectedDate, fallbackQuote);
         setDailyQuote(fallbackQuote);
+      } else {
+        // Historical date with no quote - show nothing
+        console.log('No quote available for historical date:', selectedDate);
+        setDailyQuote(null);
       }
     };
 
     loadDailyQuote();
-  }, [today, userData.apiKey, userData.preferences.showDailyQuote]);
+  }, [selectedDate, today, userData.apiKey, userData.preferences.showDailyQuote]);
 
   // Handlers
   const handleSetFocus = () => {
@@ -240,13 +259,17 @@ function App() {
           : g
       )
     }));
+    
+    // Refresh achievement stats
+    setAchievementStats(storage.getAchievementStats());
   };
 
   const handleAddTinyGoal = (text: string) => {
     const newGoal = {
       id: Date.now(),
       text,
-      completedAt: undefined
+      completedAt: undefined,
+      createdAt: new Date().toISOString()
     };
     setTinyGoals(prev => [newGoal, ...prev]);
   };
@@ -259,6 +282,34 @@ function App() {
           : g
       )
     );
+    
+    // Refresh achievement stats after a brief delay to ensure storage is updated
+    setTimeout(() => {
+      setAchievementStats(storage.getAchievementStats());
+    }, 100);
+  };
+
+  const handleMarkGoalIncomplete = (goalId: number, type: 'big' | 'tiny') => {
+    if (type === 'big') {
+      setGoals(prev => ({
+        ...prev,
+        personal: prev.personal.map(g => 
+          g.id === goalId ? { ...g, progress: 0, completedAt: undefined } : g
+        ),
+        professional: prev.professional.map(g => 
+          g.id === goalId ? { ...g, progress: 0, completedAt: undefined } : g
+        )
+      }));
+    } else {
+      setTinyGoals(prev => 
+        prev.map(g => 
+          g.id === goalId ? { ...g, completedAt: undefined } : g
+        )
+      );
+    }
+    
+    // Refresh achievement stats
+    setAchievementStats(storage.getAchievementStats());
   };
 
 
@@ -363,7 +414,7 @@ function App() {
       };
       
       console.log('Successfully generated new quote:', newQuote);
-      storage.setDailyQuote(today, newQuote);
+      await storage.setDailyQuote(today, newQuote);
       setDailyQuote(newQuote);
     } catch (error) {
       console.error('Failed to refresh daily quote:', error);
@@ -375,7 +426,7 @@ function App() {
         mood
       };
       console.log('Using fallback quote after error:', fallbackQuote);
-      storage.setDailyQuote(today, fallbackQuote);
+      await storage.setDailyQuote(today, fallbackQuote);
       setDailyQuote(fallbackQuote);
     } finally {
       setIsQuoteLoading(false);
@@ -387,6 +438,55 @@ function App() {
     // Reset to input mode to allow setting a new focus
     setIsFocusSet(false);
     setTodayFocus('');
+  };
+
+  // Date change handler
+  const handleDateChange = (newDate: string) => {
+    setSelectedDate(newDate);
+    
+    // Update focus state based on selected date
+    if (newDate === today) {
+      // Today - use existing focus logic
+      if (todayTask.text) {
+        setTodayFocus(todayTask.text);
+        setIsFocusSet(true);
+      } else {
+        setTodayFocus('');
+        setIsFocusSet(false);
+      }
+    } else {
+      // Historical date - show the task for that date
+      const historicalTask = dailyTasks[newDate];
+      if (historicalTask?.text) {
+        setTodayFocus(historicalTask.text);
+        setIsFocusSet(true);
+      } else {
+        setTodayFocus('');
+        setIsFocusSet(false);
+      }
+    }
+  };
+
+  // Date-aware task handlers
+  const handleSetFocusForDate = () => {
+    if (todayFocus.trim()) {
+      setDailyTasks(prev => ({
+        ...prev,
+        [selectedDate]: { text: todayFocus, completed: false }
+      }));
+      setIsFocusSet(true);
+    }
+  };
+
+  const handleCompleteTaskForDate = () => {
+    setDailyTasks(prev => ({
+      ...prev,
+      [selectedDate]: {
+        ...prev[selectedDate],
+        completed: !prev[selectedDate]?.completed,
+        completedAt: !prev[selectedDate]?.completed ? new Date().toISOString() : undefined
+      }
+    }));
   };
 
   // Calculate stats
@@ -426,34 +526,45 @@ function App() {
             <Settings
               userData={userData}
               recurringTasks={recurringTasks}
+              achievementStats={achievementStats}
               onUpdateUserData={handleUpdateUserData}
               onAddRecurringTask={handleAddRecurringTask}
               onCompleteRecurringTask={handleCompleteRecurringTask}
+              onMarkGoalIncomplete={handleMarkGoalIncomplete}
               onBack={() => setView('dashboard')}
             />
           ) : (
-            <Dashboard
-              goals={goals}
-              tinyGoals={tinyGoals}
-              todayFocus={todayFocus}
-              setTodayFocus={setTodayFocus}
-              isFocusSet={isFocusSet}
-              todayTask={todayTask}
-              completedTasksCount={completedTasksCount}
-              totalTasks={totalTasks}
-              dailyQuote={dailyQuote}
-              isQuoteLoading={isQuoteLoading}
-              showDailyQuote={userData.preferences.showDailyQuote}
-              onSetFocus={handleSetFocus}
-              onCompleteTodayTask={handleCompleteTodayTask}
-              onAddGoal={handleAddGoal}
-              onCompleteBigGoal={handleCompleteBigGoal}
-              onAddTinyGoal={handleAddTinyGoal}
-              onToggleTinyGoal={handleToggleTinyGoal}
-              onShowAiModal={() => setShowAiModal(true)}
-              onRefreshQuote={handleRefreshQuote}
-              onRefreshFocus={handleRefreshFocus}
-            />
+            <>
+              {/* Date Navigator */}
+              <DateNavigator
+                selectedDate={selectedDate}
+                onDateChange={handleDateChange}
+                hasData={hasDataForSelectedDate}
+              />
+              
+              <Dashboard
+                goals={goals}
+                tinyGoals={tinyGoals}
+                todayFocus={todayFocus}
+                setTodayFocus={setTodayFocus}
+                isFocusSet={isFocusSet}
+                todayTask={selectedTask}
+                completedTasksCount={completedTasksCount}
+                totalTasks={totalTasks}
+                dailyQuote={dailyQuote}
+                isQuoteLoading={isQuoteLoading}
+                showDailyQuote={userData.preferences.showDailyQuote}
+                onSetFocus={isToday ? handleSetFocus : handleSetFocusForDate}
+                onCompleteTodayTask={isToday ? handleCompleteTodayTask : handleCompleteTaskForDate}
+                onAddGoal={handleAddGoal}
+                onCompleteBigGoal={handleCompleteBigGoal}
+                onAddTinyGoal={handleAddTinyGoal}
+                onToggleTinyGoal={handleToggleTinyGoal}
+                onShowAiModal={() => setShowAiModal(true)}
+                onRefreshQuote={handleRefreshQuote}
+                onRefreshFocus={handleRefreshFocus}
+              />
+            </>
           )}
         </main>
 

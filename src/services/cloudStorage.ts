@@ -217,6 +217,77 @@ export class CloudStorageService {
   }
 
   // =====================================================
+  // DAILY QUOTES
+  // =====================================================
+
+  async getDailyQuotes(): Promise<{ [date: string]: any }> {
+    const { data, error } = await supabase
+      .from('daily_quotes')
+      .select('*')
+      .order('date', { ascending: false })
+    
+    if (error) throw new Error(`Failed to fetch daily quotes: ${error.message}`)
+    
+    const dailyQuotes: { [date: string]: any } = {}
+    
+    data?.forEach(quote => {
+      const quoteDate = quote.date as string
+      dailyQuotes[quoteDate] = {
+        quote: quote.quote as string,
+        author: quote.author as string,
+        date: quoteDate,
+        mood: quote.mood as string
+      }
+    })
+    
+    return dailyQuotes
+  }
+
+  async getDailyQuote(date: string): Promise<any | null> {
+    const { data, error } = await supabase
+      .from('daily_quotes')
+      .select('*')
+      .eq('date', date)
+      .single()
+    
+    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+      throw new Error(`Failed to fetch daily quote: ${error.message}`)
+    }
+    
+    if (!data) return null
+    
+    return {
+      quote: data.quote,
+      author: data.author,
+      date: data.date,
+      mood: data.mood
+    }
+  }
+
+  async saveDailyQuote(date: string, quote: any): Promise<void> {
+    const { error } = await supabase
+      .from('daily_quotes')
+      .upsert([{
+        date,
+        quote: quote.quote,
+        author: quote.author,
+        mood: quote.mood || 'motivational',
+        last_modified_device: this.getDeviceId()
+      }])
+    
+    if (error) throw new Error(`Failed to save daily quote: ${error.message}`)
+  }
+
+  async deleteDailyQuote(date: string): Promise<void> {
+    const { error } = await supabase
+      .from('daily_quotes')
+      .delete()
+      .eq('date', date)
+    
+    if (error) throw new Error(`Failed to delete daily quote: ${error.message}`)
+  }
+
+  // =====================================================
   // USER PREFERENCES
   // =====================================================
 

@@ -27,4 +27,5 @@ export interface TinyGoal {
   id: number;
   text: string;
   completedAt?: string;
+  createdAt?: string;
 }

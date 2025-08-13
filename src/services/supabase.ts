@@ -217,6 +217,44 @@ export type Database = {
           updated_at?: string
         }
       }
+      daily_quotes: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          quote: string
+          author: string
+          mood: 'motivational' | 'business' | 'funny' | 'dad-joke'
+          created_at: string
+          updated_at: string
+          last_modified_device: string | null
+          version: number
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date: string
+          quote: string
+          author: string
+          mood?: 'motivational' | 'business' | 'funny' | 'dad-joke'
+          created_at?: string
+          updated_at?: string
+          last_modified_device?: string | null
+          version?: number
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date?: string
+          quote?: string
+          author?: string
+          mood?: 'motivational' | 'business' | 'funny' | 'dad-joke'
+          created_at?: string
+          updated_at?: string
+          last_modified_device?: string | null
+          version?: number
+        }
+      }
     }
   }
 }

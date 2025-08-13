@@ -2,25 +2,31 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X, ChevronDown, CheckCircle, AlertTriangle, Download, Trash2 } from 'lucide-react';
 import type { UserData } from '../types/user';
 import type { RecurringTask } from '../types/task';
+import type { AchievementStats } from '../types/achievement';
 import RecurringTasksList from './RecurringTasksList';
+import AchievementsTab from './AchievementsTab';
 
 interface SettingsProps {
   userData: UserData;
   recurringTasks: RecurringTask[];
+  achievementStats: AchievementStats;
   onUpdateUserData: (updates: Partial<UserData>) => void;
   onAddRecurringTask: (task: Omit<RecurringTask, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onCompleteRecurringTask: (taskId: string) => void;
+  onMarkGoalIncomplete: (goalId: number, type: 'big' | 'tiny') => void;
   onBack: () => void;
 }
 
-type TabType = 'general' | 'recurring' | 'stats' | 'advanced';
+type TabType = 'general' | 'recurring' | 'stats' | 'achievements' | 'advanced';
 
 const Settings: React.FC<SettingsProps> = ({ 
   userData, 
   recurringTasks,
+  achievementStats,
   onUpdateUserData, 
   onAddRecurringTask,
   onCompleteRecurringTask,
+  onMarkGoalIncomplete,
   onBack 
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>('general');
@@ -110,6 +116,7 @@ const Settings: React.FC<SettingsProps> = ({
     { id: 'general' as TabType, label: 'General' },
     { id: 'recurring' as TabType, label: 'Recurring' },
     { id: 'stats' as TabType, label: 'Stats' },
+    { id: 'achievements' as TabType, label: 'Achievements' },
     { id: 'advanced' as TabType, label: 'Advanced' },
   ];
 
@@ -216,6 +223,14 @@ const Settings: React.FC<SettingsProps> = ({
               <div className="text-sm text-gray-500 dark:text-gray-400">Total Tasks</div>
             </div>
           </div>
+        );
+
+      case 'achievements':
+        return (
+          <AchievementsTab 
+            stats={achievementStats}
+            onMarkIncomplete={onMarkGoalIncomplete}
+          />
         );
 
       case 'advanced':

@@ -18,7 +18,7 @@ The MVP is fully functional with all core features implemented and tested. Ready
 - **Recurring Tasks**: Manage weekly and monthly recurring tasks with smart scheduling
 
 ### 🎨 User Experience
-- **Tabbed Settings Interface**: Professional 4-tab navigation (General, Recurring, Stats, Advanced)
+- **Tabbed Settings Interface**: Professional 5-tab navigation (General, Recurring, Stats, Achievements, Advanced)
 - **Smart API Key Management**: Intelligent detection of environment vs user API keys with status indicators
 - **Light & Dark Themes**: Toggle between themes with smooth transitions and comprehensive dark mode support
 - **Mobile Optimized**: Responsive design with horizontal scroll tabs and touch-friendly interface
@@ -28,6 +28,9 @@ The MVP is fully functional with all core features implemented and tested. Ready
 ### 📊 Data & Analytics
 - **Enhanced Stats Display**: Beautiful 2x2 grid layout showing completion metrics and streaks
 - **Progress Visualization**: See your completion history and momentum over time
+- **Achievements System**: Comprehensive tracking of goal completions with detailed statistics
+- **Recent Completions**: View your last 10 completed goals with completion dates and undo functionality
+- **Streak Tracking**: Monitor current and longest completion streaks for motivation
 - **Data Export**: Download complete backup of all your tasks, goals, and settings as JSON
 - **Data Reset**: Secure data deletion with confirmation dialog for fresh starts
 
@@ -265,6 +268,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **General Tab**: Theme selection and daily quote preferences
 - **Recurring Tab**: Manage recurring tasks and schedules
 - **Stats Tab**: View completion metrics in beautiful 2x2 grid layout
+- **Achievements Tab**: Track goal completions, streaks, and view achievement history
 - **Advanced Tab**: API key management, data export, and reset options
 
 **Multiple ways to close Settings**:
