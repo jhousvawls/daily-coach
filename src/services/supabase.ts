@@ -1,7 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// Debug environment variables
+console.log('Environment check:', {
+  hasUrl: !!import.meta.env.VITE_SUPABASE_URL,
+  hasKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+  url: import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Missing',
+  key: import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Missing'
+})
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://xzbkkledybntzvpfcgeb.supabase.co'
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6YmtrbGVkeWJudHp2cGZjZ2ViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQwNzQ0NzIsImV4cCI6MjA2OTY1MDQ3Mn0.yWkT-v8YXe7XQ1-YtAUM_g7zz1qEodjdmFi6hgvfhp8'
 
 // Create a lazy-initialized Supabase client
 let supabaseClient: ReturnType<typeof createClient> | null = null
@@ -9,8 +17,13 @@ let supabaseClient: ReturnType<typeof createClient> | null = null
 export const getSupabase = () => {
   if (!supabaseClient) {
     if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Missing Supabase environment variables:', {
+        url: supabaseUrl,
+        key: supabaseAnonKey ? 'Present' : 'Missing'
+      })
       throw new Error('Missing Supabase environment variables. Please check your .env.local file.')
     }
+    console.log('Initializing Supabase client with URL:', supabaseUrl.substring(0, 30) + '...')
     supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
   }
   return supabaseClient
