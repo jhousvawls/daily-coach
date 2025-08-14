@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, User, LogOut, Cloud } from 'lucide-react';
+import { Settings, User, LogOut, Cloud, Users, UserCircle } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { APP_NAME } from '../utils/constants';
 import { useAuth } from '../hooks/useAuth';
 import { AuthModal } from './AuthModal';
@@ -37,6 +38,11 @@ const Header: React.FC<HeaderProps> = ({ view, setView }) => {
   const [showMigrationModal, setShowMigrationModal] = useState(false);
   const [syncState, setSyncState] = useState<SyncState | null>(null);
   const { user, signOut, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Determine if we're in team mode based on current route
+  const isTeamMode = location.pathname.startsWith('/team');
 
   // Subscribe to sync state changes
   useEffect(() => {
@@ -122,6 +128,34 @@ const Header: React.FC<HeaderProps> = ({ view, setView }) => {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Mode Toggle Buttons */}
+          <div className="flex items-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
+            <button
+              onClick={() => navigate('/')}
+              className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm transition-colors ${
+                !isTeamMode
+                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+              }`}
+              title="Personal Mode"
+            >
+              <UserCircle size={16} />
+              <span className="hidden sm:inline">Personal</span>
+            </button>
+            <button
+              onClick={() => navigate('/team')}
+              className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm transition-colors ${
+                isTeamMode
+                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+              }`}
+              title="Team Mode"
+            >
+              <Users size={16} />
+              <span className="hidden sm:inline">Team</span>
+            </button>
+          </div>
+
           {/* Cloud Sync Status */}
           {isAuthenticated && syncState && (
             <SyncStatusIndicator
