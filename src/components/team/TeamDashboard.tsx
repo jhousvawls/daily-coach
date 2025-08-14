@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Plus, Settings, BarChart3, Target } from 'lucide-react';
 import { useTeam } from '../../contexts/TeamContext';
-import { APP_NAME } from '../../utils/constants';
+// import { APP_NAME } from '../../utils/constants';
 import { analyticsService } from '../../services/analytics';
 import GoalAssignmentModal from './GoalAssignmentModal';
 import AnalyticsWidgets from './AnalyticsWidgets';

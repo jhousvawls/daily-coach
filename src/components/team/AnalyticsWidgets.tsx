@@ -1,6 +1,6 @@
 import React from 'react';
 import { TrendingUp, AlertTriangle, Clock, Users, Target, Calendar } from 'lucide-react';
-import type { TeamAnalytics, MemberAnalytics, OverdueGoal, UpcomingDeadline } from '../../services/analytics';
+import type { TeamAnalytics, OverdueGoal, UpcomingDeadline } from '../../services/analytics';
 
 interface AnalyticsWidgetsProps {
   analytics: TeamAnalytics;

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import type { TeamData, TeamMember, TeamMemberData, TeamGoal, AppMode, AppContext } from '../types/team';
+import type { TeamData, TeamMember, TeamMemberData, TeamGoal, AppMode } from '../types/team';
 import { teamStorage } from '../services/teamStorage';
 
 interface TeamContextType {

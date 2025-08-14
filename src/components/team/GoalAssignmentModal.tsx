@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Plus, Calendar, Flag, User } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 import { useTeam } from '../../contexts/TeamContext';
 import type { TeamMember } from '../../types/team';
 

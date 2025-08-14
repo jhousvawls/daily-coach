@@ -1,7 +1,7 @@
 import type { TeamData, TeamMember, TeamMemberData, TeamGoal, TeamStats, TeamDeadline } from '../types/team';
-import type { TinyGoal } from '../types/goal';
-import type { DailyTasks } from '../types/task';
-import type { AchievementStats } from '../types/achievement';
+// import type { TinyGoal } from '../types/goal';
+// import type { DailyTasks } from '../types/task';
+// import type { AchievementStats } from '../types/achievement';
 import type { DailyQuote } from './storage';
 
 const TEAM_STORAGE_KEY = 'daily-focus-coach-team-data';

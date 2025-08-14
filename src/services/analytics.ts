@@ -1,4 +1,4 @@
-import type { TeamData, TeamMemberData, TeamGoal } from '../types/team';
+import type { TeamData } from '../types/team';
 import { teamStorage } from './teamStorage';
 
 export interface TeamAnalytics {
@@ -130,7 +130,7 @@ class AnalyticsService {
 
     // Calculate member performance rankings
     const memberPerformance: MemberPerformance[] = memberAnalytics
-      .map((member, index) => ({
+      .map((member) => ({
         memberId: member.memberId,
         memberName: member.memberName,
         completionRate: member.overallCompletionRate,
@@ -309,7 +309,6 @@ class AnalyticsService {
    */
   exportTeamReport(period: 'weekly' | 'monthly' | 'quarterly' | 'yearly'): string {
     const analytics = this.calculateTeamAnalytics();
-    const teamData = teamStorage.getTeamData();
     
     // Calculate date range
     const endDate = new Date();

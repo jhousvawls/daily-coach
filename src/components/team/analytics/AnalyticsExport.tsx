@@ -13,7 +13,7 @@ interface AnalyticsExportProps {
 }
 
 export const generateCSVReport = (props: AnalyticsExportProps): string => {
-  const { analytics, dateRange, selectedMembers, goalCategory, priority } = props;
+  const { analytics, dateRange, goalCategory, priority } = props;
   
   const csvLines = [
     'Team Focus Coach Analytics Report',
@@ -81,7 +81,7 @@ export const generateCSVReport = (props: AnalyticsExportProps): string => {
 };
 
 export const generateHTMLReport = (props: AnalyticsExportProps): string => {
-  const { analytics, dateRange, selectedMembers, goalCategory, priority } = props;
+  const { analytics, dateRange, goalCategory, priority } = props;
   
   const html = `
 <!DOCTYPE html>
@@ -376,7 +376,7 @@ export const downloadPDF = (props: AnalyticsExportProps) => {
   }
 };
 
-const AnalyticsExport: React.FC<AnalyticsExportProps> = (props) => {
+const AnalyticsExport: React.FC<AnalyticsExportProps> = () => {
   // This component doesn't render anything, it's just for organizing export functions
   return null;
 };

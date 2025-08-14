@@ -1,4 +1,4 @@
-import type { Goals, TinyGoal } from './goal';
+import type { TinyGoal } from './goal';
 import type { DailyTasks } from './task';
 import type { AchievementStats } from './achievement';
 import type { DailyQuote } from '../services/storage';

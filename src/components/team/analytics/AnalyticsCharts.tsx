@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingUp, BarChart3, PieChart as PieChartIcon, Calendar } from 'lucide-react';
+import { TrendingUp, BarChart3, PieChart as PieChartIcon } from 'lucide-react';
 import type { TeamAnalytics } from '../../../services/analytics';
 
 interface AnalyticsChartsProps {
@@ -159,7 +159,7 @@ const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({ analytics, dateRange 
         </div>
         
         <div className="space-y-4">
-          {data.map((member, index) => (
+          {data.map((member) => (
             <div key={member.memberName} className="space-y-2">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -214,7 +214,7 @@ const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({ analytics, dateRange 
     const completedPercentage = totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0;
     const overduePercentage = totalGoals > 0 ? (overdueGoals / totalGoals) * 100 : 0;
     const upcomingPercentage = totalGoals > 0 ? (upcomingGoals / totalGoals) * 100 : 0;
-    const onTrackPercentage = totalGoals > 0 ? (onTrackGoals / totalGoals) * 100 : 0;
+    // const onTrackPercentage = totalGoals > 0 ? (onTrackGoals / totalGoals) * 100 : 0;
 
     return (
       <div className="bg-white dark:bg-blue-800 p-6 rounded-lg border border-blue-200 dark:border-blue-700">

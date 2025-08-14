@@ -43,7 +43,7 @@ class HybridStorageService {
   private readonly SYNC_QUEUE_KEY = 'daily-focus-coach-sync-queue';
   private readonly SYNC_STATE_KEY = 'daily-focus-coach-sync-state';
   private readonly MAX_RETRY_COUNT = 3;
-  private readonly RETRY_DELAY = 1000; // 1 second
+  // private readonly RETRY_DELAY = 1000; // 1 second
   
   private syncTimeout?: NodeJS.Timeout;
   private isInitialized = false;
@@ -359,7 +359,7 @@ class HybridStorageService {
   }
 
   private async processSyncOperation(operation: SyncOperation): Promise<void> {
-    const { type, table, data } = operation;
+    const { table, data } = operation;
 
     switch (table) {
       case 'goals':
@@ -403,7 +403,7 @@ class HybridStorageService {
         await cloudStorage.updateGoal(cloudId as any, goal);
       } else {
         // Create new goal and create mapping
-        const savedGoal = await cloudStorage.saveGoal({
+        await cloudStorage.saveGoal({
           text: goal.text,
           description: goal.description,
           category: goal.category,

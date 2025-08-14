@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
 export type SyncStatus = 'offline' | 'syncing' | 'synced' | 'error' | 'pending';

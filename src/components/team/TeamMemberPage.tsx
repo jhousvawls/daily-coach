@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Users } from 'lucide-react';
 import { useTeamMember } from '../../contexts/TeamContext';
 

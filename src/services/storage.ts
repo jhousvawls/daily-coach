@@ -2,7 +2,7 @@ import type { Goals, TinyGoal } from '../types/goal';
 import type { DailyTasks, RecurringTask } from '../types/task';
 import type { UserData } from '../types/user';
 import type { CompletedGoal, AchievementStats } from '../types/achievement';
-import { cloudStorage } from './cloudStorage';
+// import { cloudStorage } from './cloudStorage'; // TODO: Re-enable when cloud sync is active
 
 export interface DailyQuote {
   quote: string;

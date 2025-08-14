@@ -95,7 +95,7 @@ class KeepAliveService {
       const supabase = getSupabase();
       
       // Simple query to keep connection alive
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('user_preferences')
         .select('count')
         .limit(1);

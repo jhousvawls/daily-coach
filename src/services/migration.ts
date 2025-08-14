@@ -1,9 +1,9 @@
 import { storage } from './storage';
 import { cloudStorage } from './cloudStorage';
 import { supabase } from './supabase';
-import type { Goal, TinyGoal } from '../types/goal';
-import type { DailyTask, RecurringTask } from '../types/task';
-import type { UserData } from '../types/user';
+// import type { Goal, TinyGoal } from '../types/goal';
+// import type { DailyTask, RecurringTask } from '../types/task';
+// import type { UserData } from '../types/user';
 
 export interface MigrationResult {
   success: boolean;
@@ -213,7 +213,7 @@ class MigrationService {
         };
 
         // Save to cloud and get the result with UUID
-        const savedGoal = await cloudStorage.saveGoal(cloudGoal);
+        await cloudStorage.saveGoal(cloudGoal);
         
         // Create ID mapping
         this.createIDMapping(goal.id, 'goal');
@@ -252,7 +252,7 @@ class MigrationService {
         };
 
         // Save to cloud
-        const savedTinyGoal = await cloudStorage.saveTinyGoal(cloudTinyGoal);
+        await cloudStorage.saveTinyGoal(cloudTinyGoal);
         
         // Create ID mapping
         this.createIDMapping(tinyGoal.id, 'tiny_goal');
