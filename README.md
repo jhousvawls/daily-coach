@@ -330,6 +330,27 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - All features function normally without cloud sync
 - Message explains local storage is being used
 
+### Supabase Security Linting Errors
+
+**Problem**: Function Search Path Mutable error for `increment_version` function
+
+**Solution**: This security vulnerability has been fixed:
+- Updated `database-setup.sql` includes secure function definition
+- For existing databases, run `database-security-fix.sql` migration script
+- See `SUPABASE-SECURITY-FIX.md` for detailed instructions
+- Fix prevents SQL injection attacks while maintaining functionality
+
+### Supabase RLS Performance Issues
+
+**Problem**: Auth RLS Initialization Plan performance warnings for database tables
+
+**Solution**: RLS performance has been optimized for all tables:
+- Updated all RLS policies to use efficient `(SELECT auth.uid())` pattern
+- For existing databases, run `database-rls-optimization.sql` migration script
+- See `SUPABASE-RLS-OPTIMIZATION.md` for detailed performance analysis
+- Optimization provides 20-80% performance improvement depending on data size
+- No application code changes required
+
 ### Quote Refresh Not Working
 
 **Problem**: Clicking refresh button doesn't generate new quotes

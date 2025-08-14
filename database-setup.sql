@@ -31,7 +31,7 @@ CREATE INDEX idx_goals_updated_at ON goals(updated_at);
 ALTER TABLE goals ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can only access their own goals" ON goals
-  FOR ALL USING (auth.uid() = user_id);
+  FOR ALL USING ((SELECT auth.uid()) = user_id);
 
 -- =====================================================
 -- 2. TINY GOALS TABLE
@@ -56,7 +56,7 @@ CREATE INDEX idx_tiny_goals_completed ON tiny_goals(user_id, completed_at);
 ALTER TABLE tiny_goals ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can only access their own tiny goals" ON tiny_goals
-  FOR ALL USING (auth.uid() = user_id);
+  FOR ALL USING ((SELECT auth.uid()) = user_id);
 
 -- =====================================================
 -- 3. DAILY TASKS TABLE
@@ -86,7 +86,7 @@ CREATE INDEX idx_daily_tasks_recent ON daily_tasks(user_id, date DESC);
 ALTER TABLE daily_tasks ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can only access their own daily tasks" ON daily_tasks
-  FOR ALL USING (auth.uid() = user_id);
+  FOR ALL USING ((SELECT auth.uid()) = user_id);
 
 -- =====================================================
 -- 4. RECURRING TASKS TABLE
@@ -124,7 +124,7 @@ CREATE INDEX idx_recurring_tasks_type ON recurring_tasks(user_id, recurrence_typ
 ALTER TABLE recurring_tasks ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can only access their own recurring tasks" ON recurring_tasks
-  FOR ALL USING (auth.uid() = user_id);
+  FOR ALL USING ((SELECT auth.uid()) = user_id);
 
 -- =====================================================
 -- 5. USER PREFERENCES TABLE
@@ -146,33 +146,40 @@ CREATE TABLE user_preferences (
 ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can only access their own preferences" ON user_preferences
-  FOR ALL USING (auth.uid() = user_id);
+  FOR ALL USING ((SELECT auth.uid()) = user_id);
 
 -- =====================================================
 -- 6. UTILITY FUNCTIONS
 -- =====================================================
 
 -- Function to increment version for conflict resolution
+-- Security: Uses empty search_path to prevent SQL injection attacks
 CREATE OR REPLACE FUNCTION increment_version(table_name TEXT, record_id UUID)
-RETURNS INTEGER AS $$
+RETURNS INTEGER 
+SET search_path = ''
+AS $$
 DECLARE
   current_version INTEGER;
 BEGIN
-  EXECUTE format('SELECT version FROM %I WHERE id = $1', table_name) 
+  -- Use fully qualified table names for security
+  EXECUTE format('SELECT version FROM public.%I WHERE id = $1', table_name) 
   INTO current_version USING record_id;
   
   RETURN COALESCE(current_version, 0) + 1;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Function to update updated_at timestamp automatically
+-- Security: Uses empty search_path to prevent SQL injection attacks
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+SET search_path = ''
+AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
 -- 7. TRIGGERS FOR AUTOMATIC TIMESTAMP UPDATES
