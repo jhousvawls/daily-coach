@@ -2,6 +2,7 @@ import React from 'react';
 import type { Goals, TinyGoal } from '../types/goal';
 import type { DailyTask } from '../types/task';
 import type { DailyQuote } from '../services/storage';
+import type { TeamMemberData } from '../types/team';
 
 // Import sub-components
 import MotivationalQuote from './MotivationalQuote';
@@ -31,6 +32,8 @@ interface DashboardProps {
   onShowAiModal: () => void;
   onRefreshQuote: (mood: string) => void;
   onRefreshFocus: () => void;
+  teamMemberData?: TeamMemberData | null;
+  isTeamMode?: boolean;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
@@ -54,6 +57,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   onShowAiModal,
   onRefreshQuote,
   onRefreshFocus,
+  teamMemberData,
+  isTeamMode,
 }) => {
   return (
     <div className="space-y-6">
@@ -88,6 +93,8 @@ const Dashboard: React.FC<DashboardProps> = ({
         goals={goals}
         onAddGoal={onAddGoal}
         onCompleteBigGoal={onCompleteBigGoal}
+        teamMemberData={teamMemberData}
+        isTeamMode={isTeamMode}
       />
       
       {/* Tiny Goals - Full Width */}

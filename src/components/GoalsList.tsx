@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { Target, Plus, CheckCircle2 } from 'lucide-react';
 import type { Goals } from '../types/goal';
+import type { TeamMemberData } from '../types/team';
 import { formatShortDate } from '../utils/date';
+import TeamGoalBadge from './team/TeamGoalBadge';
 
 interface GoalsListProps {
   goals: Goals;
   onAddGoal: (text: string, category: 'personal' | 'professional') => void;
   onCompleteBigGoal: (goalId: number, category: 'personal' | 'professional') => void;
+  teamMemberData?: TeamMemberData | null;
+  isTeamMode?: boolean;
 }
 
-const GoalsList: React.FC<GoalsListProps> = ({ goals, onAddGoal, onCompleteBigGoal }) => {
+const GoalsList: React.FC<GoalsListProps> = ({ goals, onAddGoal, onCompleteBigGoal, teamMemberData, isTeamMode }) => {
   const [newGoalText, setNewGoalText] = useState('');
   const [activeTab, setActiveTab] = useState<'personal' | 'professional'>('personal');
 
@@ -89,6 +93,17 @@ const GoalsList: React.FC<GoalsListProps> = ({ goals, onAddGoal, onCompleteBigGo
                   style={{ width: `${goal.progress}%` }}
                 ></div>
               </div>
+            )}
+
+            {/* Team Goal Badge - show assignment info if in team mode */}
+            {isTeamMode && teamMemberData && (
+              (() => {
+                // Find the corresponding team goal to get assignment info
+                const teamGoal = teamMemberData.goals[activeTab].find(tg => tg.id === goal.id);
+                return teamGoal ? (
+                  <TeamGoalBadge goal={teamGoal} isTeamMode={isTeamMode} />
+                ) : null;
+              })()
             )}
           </div>
         ))}

@@ -141,36 +141,16 @@ export const storage = {
   },
 
   async getDailyQuote(date: string): Promise<DailyQuote | null> {
-    try {
-      // Try to get from cloud storage first
-      const cloudQuote = await cloudStorage.getDailyQuote(date);
-      if (cloudQuote) {
-        // Also save to localStorage for offline access
-        this.setDailyQuote(date, cloudQuote);
-        return cloudQuote;
-      }
-    } catch (error) {
-      console.log('Cloud storage not available, using localStorage:', error);
-    }
-    
-    // Fallback to localStorage
+    // Temporarily disable cloud storage - use localStorage only
     const quotes = this.getDailyQuotes();
     return quotes[date] || null;
   },
 
   async setDailyQuote(date: string, quote: DailyQuote): Promise<void> {
-    // Always save to localStorage first for immediate access
+    // Temporarily disable cloud storage - use localStorage only
     const quotes = this.getDailyQuotes();
     quotes[date] = quote;
     this.setDailyQuotes(quotes);
-    
-    try {
-      // Also save to cloud storage
-      await cloudStorage.saveDailyQuote(date, quote);
-    } catch (error) {
-      console.log('Failed to save quote to cloud storage:', error);
-      // Continue with localStorage only
-    }
   },
 
   // Synchronous version for backward compatibility

@@ -68,64 +68,14 @@ const Header: React.FC<HeaderProps> = ({ view, setView }) => {
             </div>
           )}
 
-          {/* User Menu or Sign In Button */}
-          {isAuthenticated ? (
-            <div className="relative">
-              <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                aria-label="User menu"
-              >
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  <User className="text-white w-4 h-4" />
-                </div>
-                <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {getUserDisplayName()}
-                </span>
-              </button>
-
-              {/* User Dropdown Menu */}
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-600 z-50">
-                  <div className="py-1">
-                    <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600">
-                      {user?.email}
-                    </div>
-                    <button
-                      onClick={() => setView('settings')}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <Settings className="w-4 h-4" />
-                      Settings
-                    </button>
-                    <button
-                      onClick={handleSignOut}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Sign Out
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <>
-              <button
-                onClick={() => setShowAuthModal(true)}
-                className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => setView(view === 'settings' ? 'dashboard' : 'settings')}
-                className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                aria-label={view === 'settings' ? 'Back to dashboard' : 'Settings'}
-              >
-                <Settings className="text-gray-500 dark:text-gray-400" size={20} />
-              </button>
-            </>
-          )}
+          {/* Temporarily hide authentication - show settings button only */}
+          <button
+            onClick={() => setView(view === 'settings' ? 'dashboard' : 'settings')}
+            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            aria-label={view === 'settings' ? 'Back to dashboard' : 'Settings'}
+          >
+            <Settings className="text-gray-500 dark:text-gray-400" size={20} />
+          </button>
         </div>
       </header>
 

@@ -17,6 +17,14 @@ The MVP is fully functional with all core features implemented and tested. Ready
 - **Goal Management**: Track both big goals and tiny daily tasks with progress visualization
 - **Recurring Tasks**: Manage weekly and monthly recurring tasks with smart scheduling
 
+### 👥 Team Management (NEW!)
+- **Team Dashboard**: Comprehensive team overview with member management and performance insights
+- **Goal Assignment**: Leaders can assign goals to team members with deadlines and priorities
+- **Real-time Analytics**: Team completion rates, overdue goals, and upcoming deadlines
+- **Individual Member Pages**: Personal dashboards for each team member with assigned goals
+- **Performance Tracking**: Member rankings, completion rates, and productivity metrics
+- **Team Reports**: Export comprehensive analytics for weekly, monthly, quarterly, and yearly periods
+
 ### 🎨 User Experience
 - **Tabbed Settings Interface**: Professional 5-tab navigation (General, Recurring, Stats, Achievements, Advanced)
 - **Smart API Key Management**: Intelligent detection of environment vs user API keys with status indicators
@@ -117,14 +125,29 @@ src/
 │   ├── FocusCard.tsx    # Daily focus input/display
 │   ├── GoalsList.tsx    # Big goals management
 │   ├── TinyGoalsList.tsx # Quick tasks
+│   ├── team/           # Team management components
+│   │   ├── TeamDashboard.tsx      # Team overview and analytics
+│   │   ├── TeamSettings.tsx       # Team member management
+│   │   ├── TeamAnalytics.tsx      # Detailed analytics page
+│   │   ├── TeamMemberPage.tsx     # Individual member dashboard
+│   │   ├── GoalAssignmentModal.tsx # Goal assignment interface
+│   │   ├── TeamGoalBadge.tsx      # Assignment indicators
+│   │   └── AnalyticsWidgets.tsx   # Reusable analytics components
 │   └── ...
+├── contexts/           # React contexts
+│   └── TeamContext.tsx # Team state management
 ├── hooks/              # Custom React hooks
 │   ├── useAI.ts        # AI service integration
 │   └── useLocalStorage.ts # Storage utilities
 ├── services/           # Business logic
 │   ├── ai.ts           # OpenAI API integration
-│   └── storage.ts      # Data persistence
+│   ├── storage.ts      # Personal data persistence
+│   ├── teamStorage.ts  # Team data management
+│   └── analytics.ts    # Team analytics calculations
 ├── types/              # TypeScript definitions
+│   ├── goal.ts         # Goal and task types
+│   ├── team.ts         # Team and member types
+│   └── ...
 ├── utils/              # Helper functions
 └── App.tsx             # Main application component
 ```
