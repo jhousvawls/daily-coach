@@ -68,7 +68,49 @@ const Header: React.FC<HeaderProps> = ({ view, setView }) => {
             </div>
           )}
 
-          {/* Temporarily hide authentication - show settings button only */}
+          {/* Authentication UI */}
+          {isAuthenticated ? (
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                aria-label="User menu"
+              >
+                <User className="text-gray-500 dark:text-gray-400" size={20} />
+                <span className="text-sm text-gray-700 dark:text-gray-300 hidden sm:block">
+                  {getUserDisplayName()}
+                </span>
+              </button>
+
+              {/* User Menu Dropdown */}
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                  <div className="py-1">
+                    <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                      {user?.email}
+                    </div>
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <LogOut size={16} />
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowAuthModal(true)}
+              className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+            >
+              <Cloud size={16} />
+              <span className="hidden sm:block">Sign In</span>
+            </button>
+          )}
+
+          {/* Settings Button */}
           <button
             onClick={() => setView(view === 'settings' ? 'dashboard' : 'settings')}
             className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"

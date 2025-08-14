@@ -5,6 +5,9 @@ import './index.css'
 import App from './App.tsx'
 import { TeamProvider } from './contexts/TeamContext'
 
+// Import keep-alive service to start it automatically
+import './services/keepAlive'
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
