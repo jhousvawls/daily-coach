@@ -7,8 +7,9 @@
 -- =====================================================
 
 -- Drop the existing functions if they exist
+-- Use CASCADE to drop dependent triggers, we'll recreate them
 DROP FUNCTION IF EXISTS increment_version(TEXT, UUID);
-DROP FUNCTION IF EXISTS update_updated_at_column();
+DROP FUNCTION IF EXISTS update_updated_at_column() CASCADE;
 
 -- Create the secure version of increment_version with proper search_path
 -- This fixes the "Function Search Path Mutable" linting error
@@ -38,6 +39,36 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- =====================================================
+-- RECREATE TRIGGERS (since CASCADE dropped them)
+-- =====================================================
+
+-- Recreate the updated_at triggers for all tables
+CREATE TRIGGER update_goals_updated_at
+    BEFORE UPDATE ON goals
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_tiny_goals_updated_at
+    BEFORE UPDATE ON tiny_goals
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_daily_tasks_updated_at
+    BEFORE UPDATE ON daily_tasks
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_recurring_tasks_updated_at
+    BEFORE UPDATE ON recurring_tasks
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_user_preferences_updated_at
+    BEFORE UPDATE ON user_preferences
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
 
 -- =====================================================
 -- SECURITY IMPROVEMENTS APPLIED
