@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Settings, User, LogOut, Cloud } from 'lucide-react';
 import { APP_NAME } from '../utils/constants';
 import { useAuth } from '../hooks/useAuth';
 import { AuthModal } from './AuthModal';
+import MigrationModal from './MigrationModal';
+import SyncStatusIndicator, { type SyncStatus } from './SyncStatusIndicator';
+import { migrationService, type MigrationResult } from '../services/migration';
+import { hybridStorage, type SyncState } from '../services/hybridStorage';
 
 // Coach Icon Component
 const CoachIcon: React.FC<{ className?: string }> = ({ className }) => (
@@ -30,11 +34,59 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ view, setView }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showMigrationModal, setShowMigrationModal] = useState(false);
+  const [syncState, setSyncState] = useState<SyncState | null>(null);
   const { user, signOut, isAuthenticated } = useAuth();
+
+  // Subscribe to sync state changes
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const unsubscribe = hybridStorage.onSyncStateChange((state) => {
+      setSyncState(state);
+    });
+
+    // Get initial sync state
+    setSyncState(hybridStorage.getSyncState());
+
+    return unsubscribe;
+  }, [isAuthenticated]);
+
+  // Check for migration needs when user authenticates
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const checkMigrationNeeds = () => {
+      const migrationStatus = migrationService.getMigrationStatus();
+      
+      // Show migration modal if user has local data and hasn't migrated yet
+      if (migrationStatus.needsMigration) {
+        // Delay showing modal to allow UI to settle
+        setTimeout(() => {
+          setShowMigrationModal(true);
+        }, 1000);
+      }
+    };
+
+    checkMigrationNeeds();
+  }, [isAuthenticated]);
 
   const handleSignOut = async () => {
     await signOut();
     setShowUserMenu(false);
+    setSyncState(null);
+  };
+
+  const handleMigrationComplete = (result: MigrationResult) => {
+    if (result.success) {
+      // Enable sync in hybrid storage
+      hybridStorage.enableSync();
+    }
+    setShowMigrationModal(false);
+  };
+
+  const handleManualSync = async () => {
+    await hybridStorage.manualSync();
   };
 
   const getUserDisplayName = () => {
@@ -45,6 +97,16 @@ const Header: React.FC<HeaderProps> = ({ view, setView }) => {
       return user.email.split('@')[0];
     }
     return 'User';
+  };
+
+  const getSyncStatus = (): SyncStatus => {
+    if (!syncState) return 'offline';
+    if (!syncState.syncEnabled) return 'offline';
+    if (syncState.hasError) return 'error';
+    if (syncState.isSyncing) return 'syncing';
+    if (syncState.pendingOperations > 0) return 'pending';
+    if (!syncState.isOnline) return 'offline';
+    return 'synced';
   };
 
   return (
@@ -61,11 +123,13 @@ const Header: React.FC<HeaderProps> = ({ view, setView }) => {
 
         <div className="flex items-center gap-2">
           {/* Cloud Sync Status */}
-          {isAuthenticated && (
-            <div className="flex items-center gap-1 px-2 py-1 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-md text-xs">
-              <Cloud className="w-3 h-3" />
-              <span>Synced</span>
-            </div>
+          {isAuthenticated && syncState && (
+            <SyncStatusIndicator
+              status={getSyncStatus()}
+              lastSyncTime={syncState.lastSyncTime}
+              pendingOperations={syncState.pendingOperations}
+              onManualSync={handleManualSync}
+            />
           )}
 
           {/* Authentication UI */}
@@ -134,6 +198,13 @@ const Header: React.FC<HeaderProps> = ({ view, setView }) => {
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         initialMode="signin"
+      />
+
+      {/* Migration Modal */}
+      <MigrationModal
+        isOpen={showMigrationModal}
+        onClose={() => setShowMigrationModal(false)}
+        onMigrationComplete={handleMigrationComplete}
       />
     </>
   );
