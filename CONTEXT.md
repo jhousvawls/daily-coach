@@ -8,7 +8,7 @@
 
 **Daily Focus Coach** is an AI-powered personal productivity PWA that helps users identify and complete their most important daily task. It supports both **personal** and **team** modes.
 
-- **Live URL:** https://daily-focus-coach.vercel.app
+- **Live URL:** https://daily-coach-psi.vercel.app
 - **Repo:** https://github.com/jhousvawls/daily-coach
 - **Stack:** React 19 + TypeScript + Vite 7 + Tailwind CSS 3 + Supabase + Vercel
 - **Architecture:** Single-page app (SPA) with client-side routing via React Router v7
@@ -408,6 +408,9 @@ App.tsx
 
 ## 8. Database Schema (Supabase/PostgreSQL)
 
+**Supabase Project:** `uqvsmdfcydokeaxmzfaw`
+**Setup Script:** `database-setup-v2.sql` (11 tables)
+
 ```
 Tables:
 ├── goals              — Big goals with category, progress, subtasks
@@ -415,13 +418,18 @@ Tables:
 ├── daily_tasks        — One focus per user per day (UNIQUE constraint)
 ├── recurring_tasks    — Weekly/monthly recurring items
 ├── user_preferences   — Theme, notifications, API key (encrypted), sync settings
-└── daily_quotes       — AI-generated quotes cached per date
+├── daily_quotes       — AI-generated quotes cached per date
+├── team_members       — Team member profiles (owner_id → auth.users)
+├── team_member_data   — Per-member goals/tasks/stats as JSONB
+├── agency_focus       — Agency bucketing (core/expansion/maintain) as JSONB
+├── quarterly_focus    — Quarterly focus areas with progress as JSONB
+└── section_order      — Dashboard layout section ordering as JSONB
 
 All tables have:
-- user_id (FK to auth.users, with ON DELETE CASCADE)
+- user_id / owner_id (FK to auth.users, with ON DELETE CASCADE)
 - Row Level Security (RLS) — users can only access their own data
-- version column for conflict resolution
 - created_at / updated_at with auto-update triggers
+- version column for conflict resolution (core tables)
 ```
 
 ---

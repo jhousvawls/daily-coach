@@ -1,6 +1,6 @@
 # Daily Focus Coach
 
-🌐 **Live App**: https://daily-focus-coach-9eyd3we4p-johns-projects-58c2e0cf.vercel.app
+🌐 **Live App**: https://daily-coach-psi.vercel.app
 
 An AI-powered daily focus coach that helps you identify and complete your most important tasks while tracking progress toward bigger goals.
 
@@ -133,7 +133,8 @@ npm run dev
 - **Styling**: Tailwind CSS with custom design system
 - **Icons**: Lucide React
 - **AI**: OpenAI GPT-4 API
-- **Storage**: Browser localStorage (with export/import capabilities)
+- **Storage**: Hybrid — localStorage (offline-first) + Supabase (cloud sync)
+- **Database**: Supabase (PostgreSQL with Row-Level Security)
 - **PWA**: Service worker and manifest for app-like experience
 
 ## Project Structure
@@ -233,7 +234,7 @@ See the [MCP server README](../Documents/Cline/MCP/daily-coach-mcp/README.md) fo
 ## Deployment
 
 ### 🌐 Live Production App
-- **URL**: https://daily-focus-coach-9eyd3we4p-johns-projects-58c2e0cf.vercel.app
+- **URL**: https://daily-coach-psi.vercel.app
 - **Platform**: Vercel
 - **Status**: ✅ Live and fully functional
 - **Auto-Deploy**: Enabled on GitHub pushes
@@ -283,34 +284,24 @@ The app is already deployed on Vercel with the following configuration:
 
 ## Database & Cloud Sync Implementation
 
-### ✅ **COMPLETED: Supabase Authentication & Keep-Alive System**
-Cross-device synchronization is now available! Users can create accounts and sync their data across all devices while maintaining the offline-first experience.
+### ✅ **COMPLETED: Full Hybrid Storage with Cloud Sync**
+Cross-device synchronization is live! All data writes go through `hybridStorage` — saving to localStorage instantly, then syncing to Supabase in the background.
+
+**Supabase Project:** `uqvsmdfcydokeaxmzfaw` (11 tables with RLS)
 
 **Implementation Status:**
 - ✅ **Authentication System**: Complete sign-up/sign-in with professional UI
-- ✅ **Supabase Integration**: Database connected and fully operational
+- ✅ **Hybrid Storage Engine**: localStorage-first with async cloud sync via `hybridStorage.ts`
+- ✅ **11 Database Tables**: goals, tiny_goals, daily_tasks, recurring_tasks, user_preferences, daily_quotes, team_members, team_member_data, agency_focus, quarterly_focus, section_order
+- ✅ **Auto-Sync on Auth**: Sync auto-enables when user signs in, disables on sign out
+- ✅ **Offline Queue**: Changes queued offline, synced when back online (debounced 500ms, batched, max 3 retries)
+- ✅ **Row-Level Security**: All tables have RLS — users can only access their own data
 - ✅ **Keep-Alive Service**: Prevents database dormancy with intelligent scheduling
-- ✅ **Error Handling**: User-friendly error messages and validation
-- ✅ **Security**: Row-level security policies and proper data isolation
 
 **Implementation Documents:**
-- 📋 **[SUPABASE-NEXT-STEPS.md](SUPABASE-NEXT-STEPS.md)** - Next phase implementation plan
-- 📖 **[DATABASE-IMPLEMENTATION-PLAN.md](DATABASE-IMPLEMENTATION-PLAN.md)** - Complete technical specification
-- 🗄️ **[database-setup.sql](database-setup.sql)** - Production-ready SQL setup script
-
-### Current Features Available
-- ✅ **User Authentication**: Sign up/sign in with email and password
-- ✅ **Cloud Sync Ready**: Database and services configured for data synchronization
-- ✅ **Offline-First**: Maintains current instant responsiveness
-- ✅ **Auto Keep-Alive**: Prevents Supabase project dormancy
-- ✅ **Professional UI**: Clean authentication modals and user management
-- ✅ **Data Safety**: Secure cloud storage with proper access controls
-
-### Next Phase: Data Migration & Real-Time Sync
-- 🔄 **Hybrid Storage**: Seamless local + cloud data management
-- 🔄 **Data Migration**: Move existing localStorage data to cloud
-- 🔄 **Real-time Updates**: Live synchronization across devices
-- 🔄 **Conflict Resolution**: Handle concurrent edits gracefully
+- 🗄️ **[database-setup-v2.sql](database-setup-v2.sql)** — Current production SQL setup (11 tables)
+- 📖 **[DATABASE-IMPLEMENTATION-PLAN.md](DATABASE-IMPLEMENTATION-PLAN.md)** — Original technical specification
+- 📋 **[CONTEXT.md](CONTEXT.md)** — Full project context for AI assistants
 
 ## Future Roadmap
 
