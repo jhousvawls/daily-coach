@@ -67,17 +67,31 @@ class HybridStorageService {
     window.addEventListener('online', this.handleOnline.bind(this));
     window.addEventListener('offline', this.handleOffline.bind(this));
 
-    // Check if user is authenticated and migration is needed
+    // Check if user is authenticated — auto-enable sync
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      const migrationStatus = migrationService.getMigrationStatus();
-      this.syncState.syncEnabled = migrationStatus.isCompleted;
+      // Auto-enable sync for authenticated users
+      this.syncState.syncEnabled = true;
       
-      // If migration is complete, start processing sync queue
-      if (this.syncState.syncEnabled && this.syncState.isOnline) {
+      // Start processing any pending sync queue
+      if (this.syncState.isOnline) {
         this.processSyncQueue();
       }
     }
+
+    // Listen for auth state changes to enable/disable sync
+    supabase.auth.onAuthStateChange((_event: string, session: any) => {
+      if (session?.user) {
+        this.syncState.syncEnabled = true;
+        this.notifyStateChange();
+        if (this.syncState.isOnline) {
+          this.processSyncQueue();
+        }
+      } else {
+        this.syncState.syncEnabled = false;
+        this.notifyStateChange();
+      }
+    });
 
     this.isInitialized = true;
     this.notifyStateChange();
