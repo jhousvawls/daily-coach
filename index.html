@@ -6,6 +6,13 @@
     <link rel="apple-touch-icon" href="/icon-192.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
+    <!-- Performance: DNS prefetch & preconnect for external resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://api.openai.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#FFA726" />
     <meta name="description" content="AI-powered daily focus coach to help you identify and complete your most important tasks" />
@@ -15,6 +22,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Focus Coach" />
+    
+    <!-- Security Meta Tags -->
+    <meta name="robots" content="noindex, nofollow" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="Daily Focus Coach" />
@@ -30,6 +41,7 @@
     <title>Daily Focus Coach</title>
   </head>
   <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -481,7 +481,42 @@ When building new features, follow these patterns:
 
 ---
 
-## 12. What's NOT in the App Yet (Potential Areas)
+## 12. Security & Performance
+
+### Security Headers (vercel.json)
+All responses include:
+- **Content-Security-Policy** — restricts scripts, styles, fonts, and connections to known origins
+- **Strict-Transport-Security** — HSTS with 2-year max-age + preload
+- **X-Content-Type-Options: nosniff** — prevents MIME-type sniffing
+- **X-Frame-Options: DENY** — prevents clickjacking (iframe embedding)
+- **X-XSS-Protection** — legacy XSS filter enabled
+- **Referrer-Policy** — strict-origin-when-cross-origin
+- **Permissions-Policy** — disables camera, microphone, geolocation, payment APIs
+- **robots: noindex, nofollow** — prevents search engine indexing (private app)
+
+### Performance Optimizations
+- **DNS prefetch + preconnect** for Google Fonts and OpenAI API
+- **Code splitting** — Supabase (~117KB) and vendor (~12KB) chunks are separate from main bundle
+- **Team routes lazy-loaded** — ~62KB loaded on demand only
+- **Immutable caching** — `/assets/*` cached for 1 year (content-hashed filenames)
+- **Vite production build** — tree-shaking, minification, builds in ~1.3s
+- **Vercel Speed Insights** — real-user performance monitoring
+
+---
+
+## 13. Drag-and-Drop Layout Customization
+
+Users can reorder all 7 dashboard sections:
+- Click "Customize Layout" → enter edit mode with drag handles
+- Drag sections above/below each other (blue drop indicator)
+- Click "Done" to save or "Reset" to restore defaults
+- Layout order persisted to localStorage (`daily-focus-coach-section-order`)
+- Works on desktop (native drag API) and mobile (touch events)
+- Zero external dependencies
+
+---
+
+## 14. What's NOT in the App Yet (Potential Areas)
 
 - No notification/reminder system (preferences exist but no implementation)
 - No data export/import for personal mode

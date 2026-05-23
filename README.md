@@ -50,11 +50,23 @@ The MVP is fully functional with all core features implemented and tested. Ready
 - **Data Export**: Download complete backup of all your tasks, goals, and settings as JSON
 - **Data Reset**: Secure data deletion with confirmation dialog for fresh starts
 
-### 🔒 Privacy & Storage
+### 🔀 Layout Customization (NEW!)
+- **Drag-and-Drop Reordering**: Move any dashboard section above or below others
+- **Edit Mode**: Click "Customize Layout" to enter drag mode with visual handles
+- **Persistent Layout**: Your custom section order is saved and restored on reload
+- **Reset to Default**: One-click restore to the original layout
+- **Touch Support**: Works on mobile with touch drag events
+
+### 🔒 Security & Privacy
+- **Content Security Policy**: Strict CSP restricting scripts, styles, and connections to known origins
+- **HSTS**: Strict-Transport-Security with 2-year max-age and preload
+- **Clickjacking Protection**: X-Frame-Options DENY prevents iframe embedding
+- **MIME Sniffing Prevention**: X-Content-Type-Options nosniff on all responses
+- **Permissions Policy**: Camera, microphone, geolocation, and payment APIs disabled
+- **No Indexing**: robots noindex/nofollow — private app not indexed by search engines
 - **Local Storage**: Your data stays private and secure on your device
-- **Cross-Device Access**: Works seamlessly on iPhone, Mac, and other devices
-- **No Tracking**: No analytics or tracking scripts, full privacy protection
 - **Offline-First**: Full functionality without internet connection
+- **No Tracking**: No third-party analytics or tracking scripts
 
 ## Getting Started
 
