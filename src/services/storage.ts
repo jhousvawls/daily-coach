@@ -454,4 +454,18 @@ export const storage = {
   setQuarterlyFocusData(data: QuarterlyFocusData): void {
     localStorage.setItem('daily-focus-coach-quarterly-focus', JSON.stringify(data));
   },
+
+  // Section Order
+  getSectionOrder(): string[] | null {
+    try {
+      const stored = localStorage.getItem('daily-focus-coach-section-order');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  },
+
+  setSectionOrder(order: string[]): void {
+    localStorage.setItem('daily-focus-coach-section-order', JSON.stringify(order));
+  },
 };
