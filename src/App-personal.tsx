@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { storage } from './services/storage';
 import { teamStorage } from './services/teamStorage';
 import { useAI } from './hooks/useAI';
+import { useAuth } from './hooks/useAuth';
 import { getToday, getYesterday } from './utils/date';
 import { debug } from './utils/debug';
 import { aiService } from './services/ai';
@@ -132,6 +133,9 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
 
   // AI hook
   const { setApiKey } = useAI();
+
+  // Auth hook (for admin detection)
+  const { user: authUser } = useAuth();
 
   // Date helpers
   const today = getToday();
@@ -690,6 +694,7 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
               onCompleteRecurringTask={handleCompleteRecurringTask}
               onMarkGoalIncomplete={handleMarkGoalIncomplete}
               onBack={() => setView('dashboard')}
+              authUser={authUser}
             />
           ) : (
             <>

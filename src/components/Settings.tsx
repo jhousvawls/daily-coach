@@ -3,8 +3,10 @@ import { X, ChevronDown, CheckCircle, AlertTriangle, Download, Trash2 } from 'lu
 import type { UserData } from '../types/user';
 import type { RecurringTask } from '../types/task';
 import type { AchievementStats } from '../types/achievement';
+import type { AuthUser } from '../types/auth';
 import RecurringTasksList from './RecurringTasksList';
 import AchievementsTab from './AchievementsTab';
+import AdminPanel from './AdminPanel';
 
 interface SettingsProps {
   userData: UserData;
@@ -15,9 +17,10 @@ interface SettingsProps {
   onCompleteRecurringTask: (taskId: string) => void;
   onMarkGoalIncomplete: (goalId: number, type: 'big' | 'tiny') => void;
   onBack: () => void;
+  authUser?: AuthUser | null;
 }
 
-type TabType = 'general' | 'recurring' | 'stats' | 'achievements' | 'advanced';
+type TabType = 'general' | 'recurring' | 'stats' | 'achievements' | 'advanced' | 'admin';
 
 const Settings: React.FC<SettingsProps> = ({ 
   userData, 
@@ -27,8 +30,10 @@ const Settings: React.FC<SettingsProps> = ({
   onAddRecurringTask,
   onCompleteRecurringTask,
   onMarkGoalIncomplete,
-  onBack 
+  onBack,
+  authUser,
 }) => {
+  const isAdmin = !!(authUser?.user_metadata?.is_admin);
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [tempApiKey, setTempApiKey] = useState(userData.apiKey || '');
   const [tempTheme, setTempTheme] = useState(userData.preferences.theme);
@@ -118,6 +123,7 @@ const Settings: React.FC<SettingsProps> = ({
     { id: 'stats' as TabType, label: 'Stats' },
     { id: 'achievements' as TabType, label: 'Achievements' },
     { id: 'advanced' as TabType, label: 'Advanced' },
+    ...(isAdmin ? [{ id: 'admin' as TabType, label: '🛡️ Admin' }] : []),
   ];
 
   const renderTabContent = () => {
@@ -232,6 +238,9 @@ const Settings: React.FC<SettingsProps> = ({
             onMarkIncomplete={onMarkGoalIncomplete}
           />
         );
+
+      case 'admin':
+        return <AdminPanel />;
 
       case 'advanced':
         return (
