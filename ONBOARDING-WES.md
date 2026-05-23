@@ -9,9 +9,37 @@
 ### Access
 Open this URL in any browser (works great on phone too):
 
-**https://daily-focus-coach-9eyd3we4p-johns-projects-58c2e0cf.vercel.app**
+**https://daily-coach-psi.vercel.app**
 
 > 💡 **Tip:** On your phone, tap **Share → Add to Home Screen** to install it as an app.
+
+### Your Login
+| | |
+|---|---|
+| **Email** | `wes.chalk@wpengine.com` |
+| **Password** | `Wes@123` |
+
+Click **Sign In** (top-right of the header) and enter your credentials. Your data will sync to the cloud automatically — so you can use it on your phone, laptop, or any browser.
+
+---
+
+### 👀 See a Fully Populated Example First
+
+Want to see what a filled-out dashboard looks like before you start building your own? Log in with the **demo account**:
+
+| | |
+|---|---|
+| **Email** | `demo@dailyfocuscoach.com` |
+| **Password** | `demo2025!` |
+
+The demo has sample data pre-loaded:
+- **16 agencies** organized into Core / Expansion / Maintain buckets with priority levers
+- **3 quarterly focus areas** with progress bars (ARPU Enablement, BAM Expansion, Standardization)
+- **5 big goals** (personal + professional) with progress tracking
+- **4 tiny goals** as quick action items
+- **A daily focus task** for today
+
+> ⚠️ **Sign out of the demo account before signing in with your own credentials.** Click your name in the top-right → Sign Out.
 
 ---
 
@@ -68,6 +96,21 @@ Your custom layout is saved and remembered next time you open the app.
 | **Date Navigation** | Arrow buttons above the dashboard to view past days |
 | **Achievements** | Settings → Achievements tab (streaks, completion stats) |
 | **Data Export** | Settings → Advanced tab → Export |
+
+---
+
+## 💾 Where Is My Data Stored?
+
+Your data is stored in **two places** for maximum reliability:
+
+1. **Browser localStorage** — instant, works offline, loads immediately
+2. **Cloud (Supabase)** — syncs automatically when you're signed in
+
+This means:
+- ✅ The app works **even without internet** (offline-first)
+- ✅ Your data **syncs across devices** when you sign in
+- ✅ If you clear your browser cache, your data is **safe in the cloud**
+- ✅ No manual saving needed — everything auto-syncs in the background
 
 ---
 
@@ -163,21 +206,10 @@ Once connected, just talk naturally:
 
 ---
 
-## 💾 Where Is My Data Stored?
-
-All your data lives in a local file on your computer:
-
-```
-~/.daily-coach/data.json
-```
-
-- It's **not in the cloud** — it stays on your machine
-- The web app uses your browser's localStorage (also local)
-- No account needed, no passwords
-
----
-
 ## ❓ Troubleshooting
+
+**Can't sign in?**
+→ Make sure you're using `wes.chalk@wpengine.com` and `Wes@123` (case-sensitive password).
 
 **ChatGPT says "Can't connect to MCP server"**
 → Make sure the `mcp-remote` terminal is still running. Restart it if needed.
@@ -190,6 +222,9 @@ All your data lives in a local file on your computer:
 
 **Web app looks different than expected**
 → Hard refresh: `Cmd + Shift + R` (Mac) or `Ctrl + Shift + R` (Windows)
+
+**Data not syncing across devices?**
+→ Make sure you're signed in on both devices. Data only syncs when authenticated.
 
 ---
 
