@@ -53,7 +53,15 @@ export default async function handler(req: any, res: any) {
   const supabase = getSupabase();
 
   // Parse the route: /api/coach/goals, /api/coach/goals/123/complete, etc.
-  const routeParts: string[] = req.query.route || [];
+  // Use req.url as fallback since Vercel rewrites can strip catch-all params
+  let routeParts: string[] = req.query.route || [];
+  if (!routeParts.length || (routeParts.length === 1 && routeParts[0] === '')) {
+    const urlPath = (req.url || '').split('?')[0];
+    const match = urlPath.match(/\/api\/coach\/(.+)/);
+    if (match) {
+      routeParts = match[1].split('/');
+    }
+  }
   const route = routeParts.join('/');
   const method = req.method;
 
