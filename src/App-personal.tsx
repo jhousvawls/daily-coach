@@ -3,6 +3,7 @@ import { storage } from './services/storage';
 import { teamStorage } from './services/teamStorage';
 import { useAI } from './hooks/useAI';
 import { getToday, getYesterday } from './utils/date';
+import { debug } from './utils/debug';
 import { aiService } from './services/ai';
 import type { Goals, TinyGoal } from './types/goal';
 import type { DailyTasks, RecurringTask } from './types/task';
@@ -10,6 +11,7 @@ import type { UserData } from './types/user';
 import type { AchievementStats } from './types/achievement';
 import type { DailyQuote } from './services/storage';
 import type { TeamMember, TeamMemberData } from './types/team';
+import type { AgencyFocusData, QuarterlyFocusData } from './types/agency';
 
 // Components
 import Header from './components/Header';
@@ -28,7 +30,7 @@ interface PersonalAppProps {
 
 function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode = false }: PersonalAppProps) {
   // Use team member data if provided, otherwise use regular storage
-  console.log('PersonalApp props:', { teamMember, teamMemberData, isTeamMode });
+  debug.log('PersonalApp props:', { teamMember, teamMemberData, isTeamMode });
   
   // Core state - use team member data when available
   const [view, setView] = useState<'dashboard' | 'settings'>('dashboard');
@@ -102,6 +104,31 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
   const [achievementStats, setAchievementStats] = useState<AchievementStats>(() => 
     storage.getAchievementStats()
   );
+
+  // Agency Focus & Quarterly Focus state
+  const [agencyFocusData, setAgencyFocusData] = useState<AgencyFocusData>(() => {
+    const data = storage.getAgencyFocusData();
+    // Auto-set quarter if empty
+    if (!data.quarter) {
+      const now = new Date();
+      const q = Math.ceil((now.getMonth() + 1) / 3);
+      data.quarter = `Q${q} ${now.getFullYear()}`;
+    }
+    return data;
+  });
+  const [quarterlyFocusData, setQuarterlyFocusData] = useState<QuarterlyFocusData>(() => {
+    const data = storage.getQuarterlyFocusData();
+    // Auto-set quarter and date range if empty
+    if (!data.quarter) {
+      const now = new Date();
+      const q = Math.ceil((now.getMonth() + 1) / 3);
+      data.quarter = `Q${q}`;
+      const quarterStartMonth = (q - 1) * 3;
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      data.dateRange = `${monthNames[quarterStartMonth]} – ${monthNames[quarterStartMonth + 2]} ${now.getFullYear()}`;
+    }
+    return data;
+  });
 
   // AI hook
   const { setApiKey } = useAI();
@@ -230,6 +257,14 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
     storage.setUserData(userData);
   }, [userData]);
 
+  useEffect(() => {
+    storage.setAgencyFocusData(agencyFocusData);
+  }, [agencyFocusData]);
+
+  useEffect(() => {
+    storage.setQuarterlyFocusData(quarterlyFocusData);
+  }, [quarterlyFocusData]);
+
   // Load quote for selected date
   useEffect(() => {
     const loadDailyQuote = async () => {
@@ -237,7 +272,7 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
       const userApiKey = userData.apiKey;
       const hasApiKey = !!(envApiKey || (userApiKey && userApiKey.trim()));
 
-      console.log('Loading daily quote...', {
+      debug.log('Loading daily quote...', {
         selectedDate,
         showDailyQuote: userData.preferences.showDailyQuote,
         hasEnvApiKey: !!envApiKey,
@@ -247,7 +282,7 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
       });
 
       if (!userData.preferences.showDailyQuote) {
-        console.log('Daily quote disabled in preferences');
+        debug.log('Daily quote disabled in preferences');
         setDailyQuote(null);
         return;
       }
@@ -255,14 +290,14 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
       // Check if we already have a quote for the selected date
       const existingQuote = await storage.getDailyQuote(selectedDate);
       if (existingQuote) {
-        console.log('Found existing quote for selected date:', existingQuote);
+        debug.log('Found existing quote for selected date:', existingQuote);
         setDailyQuote(existingQuote);
         return;
       }
 
       // Only generate new quotes for today, show null for historical dates without quotes
       if (selectedDate === today && hasApiKey) {
-        console.log('Generating new quote for today with API key...', {
+        debug.log('Generating new quote for today with API key...', {
           usingEnvKey: !!envApiKey,
           usingUserKey: !envApiKey && !!(userApiKey && userApiKey.trim())
         });
@@ -282,7 +317,7 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
             mood: 'motivational'
           };
           
-          console.log('Generated new quote:', newQuote);
+          debug.log('Generated new quote:', newQuote);
           await storage.setDailyQuote(selectedDate, newQuote);
           setDailyQuote(newQuote);
         } catch (error) {
@@ -294,14 +329,14 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
             date: selectedDate,
             mood: 'motivational'
           };
-          console.log('Using fallback quote after error:', fallbackQuote);
+          debug.log('Using fallback quote after error:', fallbackQuote);
           await storage.setDailyQuote(selectedDate, fallbackQuote);
           setDailyQuote(fallbackQuote);
         } finally {
           setIsQuoteLoading(false);
         }
       } else if (selectedDate === today) {
-        console.log('No API key available for quote generation');
+        debug.log('No API key available for quote generation');
         // Set a fallback quote when no API key for today
         const fallbackQuote: DailyQuote = {
           quote: "The way to get started is to quit talking and begin doing.",
@@ -309,12 +344,12 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
           date: selectedDate,
           mood: 'motivational'
         };
-        console.log('Using fallback quote (no API key):', fallbackQuote);
+        debug.log('Using fallback quote (no API key):', fallbackQuote);
         await storage.setDailyQuote(selectedDate, fallbackQuote);
         setDailyQuote(fallbackQuote);
       } else {
         // Historical date with no quote - show nothing
-        console.log('No quote available for historical date:', selectedDate);
+        debug.log('No quote available for historical date:', selectedDate);
         setDailyQuote(null);
       }
     };
@@ -503,7 +538,7 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
     const userApiKey = userData.apiKey;
     const hasApiKey = !!(envApiKey || (userApiKey && userApiKey.trim()));
 
-    console.log('Refreshing quote...', {
+    debug.log('Refreshing quote...', {
       mood,
       hasEnvApiKey: !!envApiKey,
       hasUserApiKey: !!(userApiKey && userApiKey.trim()),
@@ -524,7 +559,7 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
     }
     
     try {
-      console.log('Calling aiService.generateDailyQuote with mood:', mood, {
+      debug.log('Calling aiService.generateDailyQuote with mood:', mood, {
         usingEnvKey: !!envApiKey,
         usingUserKey: !envApiKey && !!(userApiKey && userApiKey.trim())
       });
@@ -536,7 +571,7 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
         mood
       };
       
-      console.log('Successfully generated new quote:', newQuote);
+      debug.log('Successfully generated new quote:', newQuote);
       await storage.setDailyQuote(today, newQuote);
       setDailyQuote(newQuote);
     } catch (error) {
@@ -548,7 +583,7 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
         date: today,
         mood
       };
-      console.log('Using fallback quote after error:', fallbackQuote);
+      debug.log('Using fallback quote after error:', fallbackQuote);
       await storage.setDailyQuote(today, fallbackQuote);
       setDailyQuote(fallbackQuote);
     } finally {
@@ -686,6 +721,10 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
                 onShowAiModal={() => setShowAiModal(true)}
                 onRefreshQuote={handleRefreshQuote}
                 onRefreshFocus={handleRefreshFocus}
+                agencyFocusData={agencyFocusData}
+                onUpdateAgencyFocus={setAgencyFocusData}
+                quarterlyFocusData={quarterlyFocusData}
+                onUpdateQuarterlyFocus={setQuarterlyFocusData}
                 teamMemberData={teamMemberData}
                 isTeamMode={isTeamMode}
               />

@@ -6,6 +6,8 @@ export const STORAGE_KEYS = {
   DAILY_TASKS: 'daily-focus-coach-daily-tasks',
   USER_DATA: 'daily-focus-coach-user-data',
   APP_STATE: 'daily-focus-coach-app-state',
+  AGENCY_FOCUS: 'daily-focus-coach-agency-focus',
+  QUARTERLY_FOCUS: 'daily-focus-coach-quarterly-focus',
 } as const;
 
 export const GOAL_CATEGORIES = {

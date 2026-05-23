@@ -3,6 +3,7 @@ import type { Goals, TinyGoal } from '../types/goal';
 import type { DailyTask } from '../types/task';
 import type { DailyQuote } from '../services/storage';
 import type { TeamMemberData } from '../types/team';
+import type { AgencyFocusData, QuarterlyFocusData } from '../types/agency';
 
 // Import sub-components
 import MotivationalQuote from './MotivationalQuote';
@@ -10,6 +11,8 @@ import FocusCard from './FocusCard';
 import ProgressTracker from './ProgressTracker';
 import GoalsList from './GoalsList';
 import TinyGoalsList from './TinyGoalsList';
+import AgencyFocus from './AgencyFocus';
+import KeyFocusAreas from './KeyFocusAreas';
 
 interface DashboardProps {
   goals: Goals;
@@ -32,6 +35,10 @@ interface DashboardProps {
   onShowAiModal: () => void;
   onRefreshQuote: (mood: string) => void;
   onRefreshFocus: () => void;
+  agencyFocusData: AgencyFocusData;
+  onUpdateAgencyFocus: (data: AgencyFocusData) => void;
+  quarterlyFocusData: QuarterlyFocusData;
+  onUpdateQuarterlyFocus: (data: QuarterlyFocusData) => void;
   teamMemberData?: TeamMemberData | null;
   isTeamMode?: boolean;
 }
@@ -57,6 +64,10 @@ const Dashboard: React.FC<DashboardProps> = ({
   onShowAiModal,
   onRefreshQuote,
   onRefreshFocus,
+  agencyFocusData,
+  onUpdateAgencyFocus,
+  quarterlyFocusData,
+  onUpdateQuarterlyFocus,
   teamMemberData,
   isTeamMode,
 }) => {
@@ -102,6 +113,18 @@ const Dashboard: React.FC<DashboardProps> = ({
         goals={tinyGoals}
         onAddGoal={onAddTinyGoal}
         onToggleGoal={onToggleTinyGoal}
+      />
+
+      {/* Agency Focus - Full Width */}
+      <AgencyFocus
+        data={agencyFocusData}
+        onUpdateData={onUpdateAgencyFocus}
+      />
+
+      {/* Key Focus Areas - Full Width */}
+      <KeyFocusAreas
+        data={quarterlyFocusData}
+        onUpdateData={onUpdateQuarterlyFocus}
       />
     </div>
   );

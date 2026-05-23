@@ -36,6 +36,11 @@ The MVP is fully functional with all core features implemented and tested. Ready
 - **PWA Support**: Install as an app on your phone for native-like experience
 - **Robust Update System**: Automatic PWA updates with user notifications and seamless deployment
 
+### 📋 Agency & Quarterly Focus (NEW!)
+- **Agency Focus**: Three-bucket view (Core/Expansion/Maintain) with priority levers per agency
+- **Quarterly Focus Areas**: Visual progress cards for quarterly priorities with editable progress bars
+- **MCP Integration**: Full read/write access via AI assistants (Claude, ChatGPT, Cline)
+
 ### 📊 Data & Analytics
 - **Enhanced Stats Display**: Beautiful 2x2 grid layout showing completion metrics and streaks
 - **Progress Visualization**: See your completion history and momentum over time
@@ -154,6 +159,48 @@ src/
 ├── utils/              # Helper functions
 └── App.tsx             # Main application component
 ```
+
+## 🤖 MCP Server (AI Assistant Integration)
+
+A companion **MCP (Model Context Protocol) server** lets AI assistants manage your Daily Coach data through natural language.
+
+### Available Tools (18)
+
+| Category | Tools |
+|----------|-------|
+| **Goals** | `list_goals`, `add_goal`, `complete_goal`, `delete_goal` |
+| **Tiny Goals** | `list_tiny_goals`, `add_tiny_goal`, `toggle_tiny_goal` |
+| **Daily Focus** | `get_today_focus`, `set_today_focus`, `complete_today_focus` |
+| **Agency Focus** | `get_agency_focus`, `add_agency`, `add_agency_lever`, `toggle_agency_lever` |
+| **Quarterly Focus** | `get_quarterly_focus`, `add_focus_area`, `update_focus_progress` |
+| **Dashboard** | `get_dashboard_summary` |
+
+### Connecting
+
+**Claude Desktop** — Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "daily-coach": {
+      "command": "node",
+      "args": ["/path/to/daily-coach-mcp/build/index.js"]
+    }
+  }
+}
+```
+
+**ChatGPT** — Use [mcp-remote](https://github.com/geelen/mcp-remote) bridge:
+```bash
+npm install -g mcp-remote
+mcp-remote --port 3100 -- node /path/to/daily-coach-mcp/build/index.js
+# Then add http://localhost:3100/sse in ChatGPT → Settings → Connected Tools
+```
+
+**Cline (VS Code)** — Auto-configured in `cline_mcp_settings.json`.
+
+See the [MCP server README](../Documents/Cline/MCP/daily-coach-mcp/README.md) for full details.
+
+---
 
 ## Development
 

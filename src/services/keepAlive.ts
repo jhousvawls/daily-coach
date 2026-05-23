@@ -1,4 +1,5 @@
 import { getSupabase } from './supabase';
+import { debug } from '../utils/debug';
 
 /**
  * Keep-Alive Service to prevent Supabase from going dormant
@@ -26,11 +27,11 @@ class KeepAliveService {
    */
   start(): void {
     if (this.isRunning) {
-      console.log('Keep-alive service is already running');
+      debug.log('Keep-alive service is already running');
       return;
     }
 
-    console.log('🔄 Starting Supabase keep-alive service...');
+    debug.log('🔄 Starting Supabase keep-alive service...');
     this.isRunning = true;
     this.scheduleNextPing();
   }
@@ -44,7 +45,7 @@ class KeepAliveService {
       this.interval = null;
     }
     this.isRunning = false;
-    console.log('⏹️ Supabase keep-alive service stopped');
+    debug.log('⏹️ Supabase keep-alive service stopped');
   }
 
   /**
@@ -109,11 +110,11 @@ class KeepAliveService {
       this.lastPingTime = new Date();
       this.failureCount = 0;
       
-      console.log(`✅ Keep-alive ping #${this.pingCount} successful at ${this.lastPingTime.toLocaleTimeString()}`);
+      debug.log(`✅ Keep-alive ping #${this.pingCount} successful at ${this.lastPingTime.toLocaleTimeString()}`);
       
     } catch (error) {
       this.failureCount++;
-      console.warn(`⚠️ Keep-alive ping failed (${this.failureCount}/${this.MAX_FAILURES}):`, error);
+      debug.warn(`⚠️ Keep-alive ping failed (${this.failureCount}/${this.MAX_FAILURES}):`, error);
       
       // If we've exceeded max failures, stop the service
       if (this.failureCount >= this.MAX_FAILURES) {
@@ -145,7 +146,7 @@ class KeepAliveService {
    */
   resetFailures(): void {
     this.failureCount = 0;
-    console.log('🔄 Keep-alive failure count reset');
+    debug.log('🔄 Keep-alive failure count reset');
   }
 }
 
@@ -165,7 +166,7 @@ if (typeof window !== 'undefined') {
     }, 5000); // 5 second delay
     
   } catch (error) {
-    console.log('Supabase not configured, keep-alive service not started');
+    debug.log('Supabase not configured, keep-alive service not started');
   }
 }
 

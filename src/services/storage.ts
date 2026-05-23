@@ -2,6 +2,7 @@ import type { Goals, TinyGoal } from '../types/goal';
 import type { DailyTasks, RecurringTask } from '../types/task';
 import type { UserData } from '../types/user';
 import type { CompletedGoal, AchievementStats } from '../types/achievement';
+import type { AgencyFocusData, QuarterlyFocusData } from '../types/agency';
 // import { cloudStorage } from './cloudStorage'; // TODO: Re-enable when cloud sync is active
 
 export interface DailyQuote {
@@ -424,5 +425,33 @@ export const storage = {
     }
     
     return longestStreak;
+  },
+
+  // Agency Focus Data
+  getAgencyFocusData(): AgencyFocusData {
+    try {
+      const stored = localStorage.getItem('daily-focus-coach-agency-focus');
+      return stored ? JSON.parse(stored) : { quarter: '', agencies: [] };
+    } catch {
+      return { quarter: '', agencies: [] };
+    }
+  },
+
+  setAgencyFocusData(data: AgencyFocusData): void {
+    localStorage.setItem('daily-focus-coach-agency-focus', JSON.stringify(data));
+  },
+
+  // Quarterly Focus Data
+  getQuarterlyFocusData(): QuarterlyFocusData {
+    try {
+      const stored = localStorage.getItem('daily-focus-coach-quarterly-focus');
+      return stored ? JSON.parse(stored) : { quarter: '', dateRange: '', areas: [] };
+    } catch {
+      return { quarter: '', dateRange: '', areas: [] };
+    }
+  },
+
+  setQuarterlyFocusData(data: QuarterlyFocusData): void {
+    localStorage.setItem('daily-focus-coach-quarterly-focus', JSON.stringify(data));
   },
 };

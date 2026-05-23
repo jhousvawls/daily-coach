@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
+import { debug } from '../utils/debug'
 
 // Debug environment variables
-console.log('Environment check:', {
+debug.log('Environment check:', {
   hasUrl: !!import.meta.env.VITE_SUPABASE_URL,
   hasKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
   url: import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Missing',
@@ -23,7 +24,7 @@ export const getSupabase = () => {
       })
       throw new Error('Missing Supabase environment variables. Please check your .env.local file.')
     }
-    console.log('Initializing Supabase client with URL:', supabaseUrl.substring(0, 30) + '...')
+    debug.log('Initializing Supabase client with URL:', supabaseUrl.substring(0, 30) + '...')
     supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
   }
   return supabaseClient
