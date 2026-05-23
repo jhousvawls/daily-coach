@@ -25,7 +25,9 @@ Click **Sign In** (top-right of the header) and enter your credentials. Your dat
 
 ### 👀 See a Fully Populated Example First
 
-Want to see what a filled-out dashboard looks like before you start building your own? Log in with the **demo account**:
+Want to see what a filled-out dashboard looks like before you start building your own? 
+
+Log in with the **demo account**:
 
 | | |
 |---|---|
