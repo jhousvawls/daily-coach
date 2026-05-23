@@ -1,0 +1,326 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Daily Focus Coach API",
+    "description": "API for managing goals, daily focus, agency tracking, and quarterly focus areas in the Daily Focus Coach app.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://daily-coach-psi.vercel.app"
+    }
+  ],
+  "paths": {
+    "/api/coach/dashboard": {
+      "get": {
+        "operationId": "getDashboard",
+        "summary": "Get full dashboard summary",
+        "description": "Returns today's focus, goals summary, tiny goals summary, agency focus stats, and quarterly focus progress.",
+        "responses": {
+          "200": {
+            "description": "Dashboard summary",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        }
+      }
+    },
+    "/api/coach/goals": {
+      "get": {
+        "operationId": "listGoals",
+        "summary": "List all goals",
+        "description": "Returns all big goals. Optionally filter by category (personal or professional).",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["personal", "professional"] },
+            "description": "Filter by goal category"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of goals",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "type": "object" } } } }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createGoal",
+        "summary": "Create a new goal",
+        "description": "Create a new personal or professional goal.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text", "category"],
+                "properties": {
+                  "text": { "type": "string", "description": "Goal text" },
+                  "category": { "type": "string", "enum": ["personal", "professional"], "description": "Goal category" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Goal created", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/api/coach/goals/{goalId}/complete": {
+      "post": {
+        "operationId": "completeGoal",
+        "summary": "Mark a goal as completed",
+        "description": "Sets the goal progress to 100% and marks it as completed.",
+        "parameters": [
+          { "name": "goalId", "in": "path", "required": true, "schema": { "type": "string" }, "description": "The goal ID" }
+        ],
+        "responses": {
+          "200": { "description": "Goal completed", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/api/coach/goals/{goalId}": {
+      "delete": {
+        "operationId": "deleteGoal",
+        "summary": "Delete a goal",
+        "parameters": [
+          { "name": "goalId", "in": "path", "required": true, "schema": { "type": "string" }, "description": "The goal ID" }
+        ],
+        "responses": {
+          "200": { "description": "Goal deleted", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/api/coach/tiny-goals": {
+      "get": {
+        "operationId": "listTinyGoals",
+        "summary": "List all tiny goals",
+        "description": "Returns all tiny goals (quick checkbox items).",
+        "responses": {
+          "200": { "description": "List of tiny goals", "content": { "application/json": { "schema": { "type": "array", "items": { "type": "object" } } } } }
+        }
+      },
+      "post": {
+        "operationId": "createTinyGoal",
+        "summary": "Create a new tiny goal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string", "description": "Tiny goal text" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Tiny goal created", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/api/coach/tiny-goals/{goalId}/toggle": {
+      "post": {
+        "operationId": "toggleTinyGoal",
+        "summary": "Toggle a tiny goal's completion status",
+        "parameters": [
+          { "name": "goalId", "in": "path", "required": true, "schema": { "type": "string" }, "description": "The tiny goal ID" }
+        ],
+        "responses": {
+          "200": { "description": "Tiny goal toggled", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/api/coach/focus": {
+      "get": {
+        "operationId": "getTodayFocus",
+        "summary": "Get today's focus task",
+        "description": "Returns today's focus task and its completion status.",
+        "responses": {
+          "200": { "description": "Today's focus", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      },
+      "post": {
+        "operationId": "setTodayFocus",
+        "summary": "Set today's focus task",
+        "description": "Set or update the most important task for today.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string", "description": "Focus task text" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Focus set", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/api/coach/focus/complete": {
+      "post": {
+        "operationId": "toggleFocusComplete",
+        "summary": "Toggle today's focus completion",
+        "description": "Toggle today's focus task between completed and not completed.",
+        "responses": {
+          "200": { "description": "Focus toggled", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/api/coach/agencies": {
+      "get": {
+        "operationId": "getAgencyFocus",
+        "summary": "Get agency focus data",
+        "description": "Returns all agencies organized by bucket (core, expansion, maintain) with their priority levers.",
+        "responses": {
+          "200": { "description": "Agency focus data", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      },
+      "post": {
+        "operationId": "addAgency",
+        "summary": "Add a new agency",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "bucket"],
+                "properties": {
+                  "name": { "type": "string", "description": "Agency name" },
+                  "bucket": { "type": "string", "enum": ["core", "expansion", "maintain"], "description": "Agency bucket" },
+                  "detail": { "type": "string", "description": "Agency detail/description" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Agency added", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/api/coach/agencies/{agencyId}/levers": {
+      "post": {
+        "operationId": "addAgencyLever",
+        "summary": "Add a priority lever to an agency",
+        "parameters": [
+          { "name": "agencyId", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "The agency ID" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string", "description": "Lever text" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Lever added", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/api/coach/agencies/{agencyId}/levers/{leverId}/toggle": {
+      "post": {
+        "operationId": "toggleAgencyLever",
+        "summary": "Toggle an agency lever's completion",
+        "parameters": [
+          { "name": "agencyId", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "The agency ID" },
+          { "name": "leverId", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "The lever ID" }
+        ],
+        "responses": {
+          "200": { "description": "Lever toggled", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/api/coach/quarterly": {
+      "get": {
+        "operationId": "getQuarterlyFocus",
+        "summary": "Get quarterly focus areas",
+        "description": "Returns all quarterly key focus areas with their progress percentages.",
+        "responses": {
+          "200": { "description": "Quarterly focus data", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      },
+      "post": {
+        "operationId": "addFocusArea",
+        "summary": "Add a quarterly focus area",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title"],
+                "properties": {
+                  "title": { "type": "string", "description": "Focus area title" },
+                  "description": { "type": "string", "description": "Focus area description" },
+                  "color": { "type": "string", "enum": ["blue", "green", "purple", "amber", "rose", "indigo"], "description": "Color" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Focus area added", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/api/coach/quarterly/{areaId}/progress": {
+      "put": {
+        "operationId": "updateFocusProgress",
+        "summary": "Update a focus area's progress",
+        "parameters": [
+          { "name": "areaId", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "The focus area ID" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["progress"],
+                "properties": {
+                  "progress": { "type": "integer", "minimum": 0, "maximum": 100, "description": "Progress percentage (0-100)" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Progress updated", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  },
+  "security": [
+    { "apiKey": [] }
+  ]
+}
