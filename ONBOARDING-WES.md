@@ -114,67 +114,21 @@ This means:
 
 ---
 
-## 🤖 Using ChatGPT with Daily Coach (MCP Integration)
+## 🤖 Using ChatGPT with Daily Coach
 
-This lets you manage your goals, focus, agencies, and more through **natural conversation with ChatGPT**.
+You can manage your goals, focus, agencies, and more through **natural conversation with ChatGPT** — no setup, no terminal, no installs.
 
-### Prerequisites
-You'll need these installed on your computer:
-- **Node.js** (version 18 or higher) — [download here](https://nodejs.org/)
-- **npm** (comes with Node.js)
+### How to Access
 
-### Step-by-Step Setup
+John will share a **Custom GPT link** with you. Just click it and start talking! It works directly in the ChatGPT web app.
 
-#### 1. Clone and build the MCP server
-
-Open Terminal and run:
-
-```bash
-# Clone the repo
-git clone https://github.com/jhousvawls/daily-coach.git
-cd daily-coach
-
-# Go to the MCP server directory
-cd ../daily-coach-mcp  # or wherever John shares the MCP server folder
-
-# Install dependencies
-npm install
-
-# Build it
-npm run build
-```
-
-> 📍 **Note:** John may share the built MCP server with you directly — ask him for the path. The server file is at:
-> `/path/to/daily-coach-mcp/build/index.js`
-
-#### 2. Install the MCP-to-ChatGPT bridge
-
-```bash
-npm install -g mcp-remote
-```
-
-#### 3. Start the bridge
-
-```bash
-mcp-remote --port 3100 -- node /path/to/daily-coach-mcp/build/index.js
-```
-
-> ⚠️ Keep this terminal window running while you use ChatGPT.
-
-#### 4. Connect ChatGPT
-
-1. Open **ChatGPT** in your browser
-2. Go to **Settings** → **Connected Tools** → **Add MCP Server**
-3. Enter this URL: `http://localhost:3100/sse`
-4. Click **Connect**
-
-That's it! ChatGPT now has access to all 18 Daily Coach tools.
+> 💡 The first time you use it, ChatGPT will ask to "Allow" the Daily Focus Coach actions — click **Allow** to let it read/write your data.
 
 ---
 
 ### What You Can Ask ChatGPT
 
-Once connected, just talk naturally:
+Once you open the Custom GPT, just talk naturally:
 
 | What You Want | What to Say |
 |--------------|-------------|
@@ -193,38 +147,40 @@ Once connected, just talk naturally:
 | Update progress | *"Update Pipeline Growth to 65%"* |
 | See quarterly focus | *"Show my quarterly focus areas"* |
 
-### All Available Tools (18)
+### What It Can Do
 
-| Category | Tools |
-|----------|-------|
-| **Goals** | `list_goals`, `add_goal`, `complete_goal`, `delete_goal` |
-| **Tiny Goals** | `list_tiny_goals`, `add_tiny_goal`, `toggle_tiny_goal` |
-| **Daily Focus** | `get_today_focus`, `set_today_focus`, `complete_today_focus` |
-| **Agency Focus** | `get_agency_focus`, `add_agency`, `add_agency_lever`, `toggle_agency_lever` |
-| **Quarterly Focus** | `get_quarterly_focus`, `add_focus_area`, `update_focus_progress` |
-| **Dashboard** | `get_dashboard_summary` |
+| Category | Capabilities |
+|----------|-------------|
+| **Daily Focus** | View, set, and complete today's focus task |
+| **Big Goals** | Create, list, complete, and delete personal & professional goals |
+| **Tiny Goals** | Create, list, and toggle quick checkbox items |
+| **Agency Focus** | View agencies by bucket, add agencies, add/toggle priority levers |
+| **Quarterly Focus** | View focus areas, add new ones, update progress (0-100%) |
+| **Dashboard** | Get a full summary of everything in one shot |
+
+> 📝 **Note:** Changes you make through ChatGPT show up in the web app too — they share the same database!
 
 ---
 
 ## ❓ Troubleshooting
 
-**Can't sign in?**
+**Can't sign in to the web app?**
 → Make sure you're using `wes.chalk@wpengine.com` and `Wes@123` (case-sensitive password).
 
-**ChatGPT says "Can't connect to MCP server"**
-→ Make sure the `mcp-remote` terminal is still running. Restart it if needed.
+**ChatGPT says "couldn't complete the action" or shows an error?**
+→ Try again — occasionally the API takes a moment to respond. If it keeps failing, let John know.
 
-**"node: command not found"**
-→ Install Node.js from https://nodejs.org/ (choose the LTS version)
+**ChatGPT asks to "Allow" actions?**
+→ Click **Allow** or **Always allow** — this lets the GPT read and write your data through the API.
 
-**ChatGPT doesn't show the tools**
-→ Try disconnecting and reconnecting the MCP server in ChatGPT settings.
-
-**Web app looks different than expected**
+**Web app looks different than expected?**
 → Hard refresh: `Cmd + Shift + R` (Mac) or `Ctrl + Shift + R` (Windows)
 
 **Data not syncing across devices?**
 → Make sure you're signed in on both devices. Data only syncs when authenticated.
+
+**Changes in ChatGPT not showing in the web app?**
+→ Refresh the web app — ChatGPT writes directly to the same database, so it should appear immediately.
 
 ---
 
