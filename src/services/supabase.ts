@@ -9,8 +9,8 @@ debug.log('Environment check:', {
   key: import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Missing'
 })
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://xzbkkledybntzvpfcgeb.supabase.co'
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6YmtrbGVkeWJudHp2cGZjZ2ViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQwNzQ0NzIsImV4cCI6MjA2OTY1MDQ3Mn0.yWkT-v8YXe7XQ1-YtAUM_g7zz1qEodjdmFi6hgvfhp8'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://uqvsmdfcydokeaxmzfaw.supabase.co'
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxdnNtZGZjeWRva2VheG16ZmF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1NDA2OTEsImV4cCI6MjA5NTExNjY5MX0.R6C3KMHX4jEYl2GKmxYpWYbFiVD7w8ovucMKahg4dNg'
 
 // Create a lazy-initialized Supabase client
 let supabaseClient: ReturnType<typeof createClient> | null = null
