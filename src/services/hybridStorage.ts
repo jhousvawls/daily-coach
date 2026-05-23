@@ -6,11 +6,12 @@ import type { Goals, TinyGoal } from '../types/goal';
 import type { DailyTasks, RecurringTask } from '../types/task';
 import type { UserData } from '../types/user';
 import type { DailyQuote, DailyQuotes } from './storage';
+import type { AgencyFocusData, QuarterlyFocusData } from '../types/agency';
 
 export interface SyncOperation {
   id: string;
   type: 'create' | 'update' | 'delete';
-  table: 'goals' | 'tiny_goals' | 'daily_tasks' | 'recurring_tasks' | 'quotes' | 'preferences';
+  table: 'goals' | 'tiny_goals' | 'daily_tasks' | 'recurring_tasks' | 'quotes' | 'preferences' | 'agency_focus' | 'quarterly_focus' | 'section_order';
   data: any;
   timestamp: string;
   retryCount: number;
@@ -380,6 +381,15 @@ class HybridStorageService {
       case 'preferences':
         await this.syncPreferences(data);
         break;
+      case 'agency_focus':
+        await this.syncAgencyFocus(data);
+        break;
+      case 'quarterly_focus':
+        await this.syncQuarterlyFocus(data);
+        break;
+      case 'section_order':
+        await this.syncSectionOrder(data);
+        break;
       default:
         throw new Error(`Unknown table: ${table}`);
     }
@@ -468,6 +478,85 @@ class HybridStorageService {
     };
     
     await cloudStorage.saveUserPreferences(preferences);
+  }
+
+  private async syncAgencyFocus(data: AgencyFocusData): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase
+      .from('agency_focus')
+      .upsert({
+        user_id: user.id,
+        quarter: data.quarter,
+        agencies: data.agencies,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+  }
+
+  private async syncQuarterlyFocus(data: QuarterlyFocusData): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase
+      .from('quarterly_focus')
+      .upsert({
+        user_id: user.id,
+        quarter: data.quarter,
+        date_range: data.dateRange,
+        areas: data.areas,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+  }
+
+  private async syncSectionOrder(data: string[]): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase
+      .from('section_order')
+      .upsert({
+        user_id: user.id,
+        sections: data,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+  }
+
+  // =====================================================
+  // AGENCY & QUARTERLY FOCUS METHODS
+  // =====================================================
+
+  getAgencyFocusData(): AgencyFocusData {
+    return storage.getAgencyFocusData();
+  }
+
+  async setAgencyFocusData(data: AgencyFocusData): Promise<void> {
+    storage.setAgencyFocusData(data);
+    if (this.syncState.syncEnabled) {
+      this.queueSyncOperation('update', 'agency_focus', data);
+    }
+  }
+
+  getQuarterlyFocusData(): QuarterlyFocusData {
+    return storage.getQuarterlyFocusData();
+  }
+
+  async setQuarterlyFocusData(data: QuarterlyFocusData): Promise<void> {
+    storage.setQuarterlyFocusData(data);
+    if (this.syncState.syncEnabled) {
+      this.queueSyncOperation('update', 'quarterly_focus', data);
+    }
+  }
+
+  getSectionOrder(): string[] | null {
+    return storage.getSectionOrder();
+  }
+
+  setSectionOrder(order: string[]): void {
+    storage.setSectionOrder(order);
+    if (this.syncState.syncEnabled) {
+      this.queueSyncOperation('update', 'section_order', order);
+    }
   }
 
   // =====================================================

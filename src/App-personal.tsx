@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { storage } from './services/storage';
+import { hybridStorage } from './services/hybridStorage';
 import { teamStorage } from './services/teamStorage';
 import { useAI } from './hooks/useAI';
 import { useAuth } from './hooks/useAuth';
@@ -233,7 +234,7 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
 
       teamStorage.setMemberData(teamMember.id, updatedMemberData);
     } else {
-      storage.setGoals(goals);
+      hybridStorage.setGoals(goals);
     }
   }, [goals, isTeamMode, teamMember, tinyGoals, dailyTasks, achievementStats]);
 
@@ -241,7 +242,7 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
     if (isTeamMode && teamMember) {
       // Already handled in goals useEffect
     } else {
-      storage.setTinyGoals(tinyGoals);
+      hybridStorage.setTinyGoals(tinyGoals);
     }
   }, [tinyGoals, isTeamMode, teamMember]);
 
@@ -249,24 +250,24 @@ function PersonalApp({ teamMember = undefined, teamMemberData = null, isTeamMode
     if (isTeamMode && teamMember) {
       // Already handled in goals useEffect
     } else {
-      storage.setDailyTasks(dailyTasks);
+      hybridStorage.setDailyTasks(dailyTasks);
     }
   }, [dailyTasks, isTeamMode, teamMember]);
 
   useEffect(() => {
-    storage.setRecurringTasks(recurringTasks);
+    hybridStorage.setRecurringTasks(recurringTasks);
   }, [recurringTasks]);
 
   useEffect(() => {
-    storage.setUserData(userData);
+    hybridStorage.setUserData(userData);
   }, [userData]);
 
   useEffect(() => {
-    storage.setAgencyFocusData(agencyFocusData);
+    hybridStorage.setAgencyFocusData(agencyFocusData);
   }, [agencyFocusData]);
 
   useEffect(() => {
-    storage.setQuarterlyFocusData(quarterlyFocusData);
+    hybridStorage.setQuarterlyFocusData(quarterlyFocusData);
   }, [quarterlyFocusData]);
 
   // Load quote for selected date
